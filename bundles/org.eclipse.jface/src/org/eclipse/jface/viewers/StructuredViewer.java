@@ -52,11 +52,12 @@ import org.eclipse.swt.widgets.Widget;
  * <code>addFilter</code>). When the viewer receives an update, it asks each
  * of its filters if it is out of date, and refilters elements as required.
  * </p>
+ * @param <T> 
  * 
  * @see ViewerFilter
  * @see ViewerComparator
  */
-public abstract class StructuredViewer extends ContentViewer implements IPostSelectionProvider {
+public abstract class StructuredViewer<T> extends ContentViewer<T> implements IPostSelectionProvider {
 
 	/**
 	 * A map from the viewer's model elements to SWT widgets. (key type:
@@ -1657,7 +1658,10 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 *  (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ContentViewer#setContentProvider(org.eclipse.jface.viewers.IContentProvider)
 	 */
-	public void setContentProvider(IContentProvider provider) {
+	/**
+	 * @param provider 
+	 */
+	public void setContentProvider(IContentProvider<T> provider) {
 		assertContentProviderType(provider);
 		super.setContentProvider(provider);
 	}
@@ -1667,7 +1671,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 * supported types.
 	 * @param provider
 	 */
-	protected void assertContentProviderType(IContentProvider provider) {
+	protected void assertContentProviderType(IContentProvider<T> provider) {
 		Assert.isTrue(provider instanceof IStructuredContentProvider);
 	}
 
@@ -1675,7 +1679,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 *  (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.Viewer#setInput(java.lang.Object)
 	 */
-	public final void setInput(Object input) {
+	public final void setInput(T input) {
 		Control control = getControl();
 		if (control == null || control.isDisposed()) {
 			throw new IllegalStateException(

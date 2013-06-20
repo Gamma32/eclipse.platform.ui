@@ -33,7 +33,7 @@ package org.eclipse.jface.viewers;
  * images are needed.  When label providers are used in this fashion
  * it is the responsibility of the user to ensure <code>dispose</code>
  * is called when the provider is no longer needed.
- * </p>
+ * </p> 
  *
  * @see ILabelProvider
  * @see ITableLabelProvider

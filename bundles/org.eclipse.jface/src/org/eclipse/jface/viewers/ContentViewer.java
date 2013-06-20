@@ -47,19 +47,20 @@ import org.eclipse.swt.widgets.Control;
  * support selections (<code>setSelection</code>, <code>getSelection</code>)
  * </ul>
  * </p>
+ * @param <T> 
  */
-public abstract class ContentViewer extends Viewer {
+public abstract class ContentViewer<T> extends Viewer<T> {
 
     /**
      * This viewer's content provider, or <code>null</code> if none.
      */
-    private IContentProvider contentProvider = null;
+    private IContentProvider<T> contentProvider = null;
 
     /**
      * This viewer's input, or <code>null</code> if none.
      * The viewer's input provides the "model" for the viewer's content.
      */
-    private Object input = null;
+    private T input = null;
 
     /**
      * This viewer's label provider. Initially <code>null</code>, but
@@ -119,7 +120,7 @@ public abstract class ContentViewer extends Viewer {
      *
      * @return the content provider, or <code>null</code> if none
      */
-    public IContentProvider getContentProvider() {
+    public IContentProvider<T> getContentProvider() {
         return contentProvider;
     }
 
@@ -129,7 +130,7 @@ public abstract class ContentViewer extends Viewer {
      * if none. The viewer's input provides the "model" for the viewer's
      * content.
      */
-    public Object getInput() {
+    public T getInput() {
         return input;
     }
 
@@ -240,12 +241,12 @@ public abstract class ContentViewer extends Viewer {
      * @param contentProvider the content provider
      * @see #getContentProvider
      */
-    public void setContentProvider(IContentProvider contentProvider) {
+    public void setContentProvider(IContentProvider<T> contentProvider) {
         Assert.isNotNull(contentProvider);
-        IContentProvider oldContentProvider = this.contentProvider;
+        IContentProvider<T> oldContentProvider = this.contentProvider;
         this.contentProvider = contentProvider;
         if (oldContentProvider != null) {
-            Object currentInput = getInput();
+            T currentInput = getInput();
             oldContentProvider.inputChanged(this, currentInput, null);
             oldContentProvider.dispose();
             contentProvider.inputChanged(this, null, currentInput);
@@ -260,8 +261,9 @@ public abstract class ContentViewer extends Viewer {
      * not have a content provider. Subclassers are advised to override 
      * <code>inputChanged</code> rather than this method, but may extend this method
      * if required.
+     * @param input 
      */
-    public void setInput(Object input) {
+    public void setInput(T input) {
     	Control control = getControl();
 		if (control == null || control.isDisposed()) {
 			throw new IllegalStateException(
@@ -272,7 +274,7 @@ public abstract class ContentViewer extends Viewer {
                 .isTrue(getContentProvider() != null,
                         "ContentViewer must have a content provider when input is set."); //$NON-NLS-1$
 
-        Object oldInput = getInput();
+        T oldInput = getInput();
         contentProvider.inputChanged(this, oldInput, input);
         this.input = input;
 

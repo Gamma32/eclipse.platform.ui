@@ -10,15 +10,13 @@
  *******************************************************************************/
 package org.eclipse.jface.viewers;
 
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.events.HelpEvent;
 import org.eclipse.swt.events.HelpListener;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Item;
-
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.ListenerList;
-
-import org.eclipse.jface.util.SafeRunnable;
 
 /**
  * A viewer is a model-based adapter on a widget.
@@ -44,8 +42,9 @@ import org.eclipse.jface.util.SafeRunnable;
  * </li>
  * </ul>
  * </p>
+ * @param <T> 
  */
-public abstract class Viewer implements IInputSelectionProvider {
+public abstract class Viewer<T> implements IInputSelectionProvider {
 
     /**
      * List of selection change listeners (element type: <code>ISelectionChangedListener</code>).
@@ -377,7 +376,7 @@ public abstract class Viewer implements IInputSelectionProvider {
      *
      * @param input the input of this viewer, or <code>null</code> if none
      */
-    public abstract void setInput(Object input);
+    public abstract void setInput(T input);
 
     /**
 	 * The viewer implementation of this <code>ISelectionProvider</code>
