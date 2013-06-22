@@ -15,8 +15,9 @@ package org.eclipse.jface.viewers;
  * and the viewer itself.
  * 
  * @see org.eclipse.jface.viewers.ContentViewer#setContentProvider(IContentProvider)
+ * @param <E> 
  */
-public interface IContentProvider {
+public interface IContentProvider<E> {
     /**
      * Disposes of this content provider.  
      * This is called by the viewer when it is disposed.
