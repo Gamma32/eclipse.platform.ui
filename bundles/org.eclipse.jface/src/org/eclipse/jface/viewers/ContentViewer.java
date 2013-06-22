@@ -47,8 +47,9 @@ import org.eclipse.swt.widgets.Control;
  * support selections (<code>setSelection</code>, <code>getSelection</code>)
  * </ul>
  * </p>
+ * @param <E> 
  */
-public abstract class ContentViewer extends Viewer {
+public abstract class ContentViewer<E> extends Viewer {
 
     /**
      * This viewer's content provider, or <code>null</code> if none.
@@ -295,8 +296,8 @@ public abstract class ContentViewer extends Viewer {
      *
      * @param labelProvider the label provider, or <code>null</code> if none
      */
-    public void setLabelProvider(IBaseLabelProvider labelProvider) {
-        IBaseLabelProvider oldProvider = this.labelProvider;
+    public void setLabelProvider(IBaseLabelProvider<E> labelProvider) {
+        IBaseLabelProvider<E> oldProvider = this.labelProvider;
         // If it hasn't changed, do nothing.
         // This also ensures that the provider is not disposed
         // if set a second time.

@@ -29,11 +29,12 @@ import org.eclipse.swt.widgets.Control;
  * and configured with a domain-specific content provider, label provider, element
  * filter (optional), and element sorter (optional).
  * </p>
+ * @param <E> 
  * 
  * @see org.eclipse.jface.viewers.ListViewer
  * @since 3.0 (made non-final in 3.4)
  */
-public class ComboViewer extends AbstractListViewer {
+public class ComboViewer<E> extends AbstractListViewer<E> {
 
     /**
      * This viewer's list control if this viewer is instantiated with a combo control; otherwise
