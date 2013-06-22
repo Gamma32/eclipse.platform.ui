@@ -47,7 +47,7 @@ import org.eclipse.swt.widgets.Control;
  * support selections (<code>setSelection</code>, <code>getSelection</code>)
  * </ul>
  * </p>
- * @param <E> 
+ * @param <E> Type of an element of the model
  */
 public abstract class ContentViewer<E> extends Viewer {
 
@@ -66,7 +66,7 @@ public abstract class ContentViewer<E> extends Viewer {
      * This viewer's label provider. Initially <code>null</code>, but
      * lazily initialized (to a <code>SimpleLabelProvider</code>).
      */
-    private IBaseLabelProvider labelProvider = null;
+    private IBaseLabelProvider<E> labelProvider = null;
 
     /**
      * This viewer's label provider listener.
@@ -149,9 +149,9 @@ public abstract class ContentViewer<E> extends Viewer {
      *
      * @return a label provider
      */
-    public IBaseLabelProvider getLabelProvider() {
+    public IBaseLabelProvider<E> getLabelProvider() {
         if (labelProvider == null) {
-			labelProvider = new LabelProvider();
+			labelProvider = new LabelProvider<E>();
 		}
         return labelProvider;
     }
@@ -324,7 +324,7 @@ public abstract class ContentViewer<E> extends Viewer {
 	 * 
 	 * @since 3.4
 	 */
-	void internalDisposeLabelProvider(IBaseLabelProvider oldProvider) {
+	void internalDisposeLabelProvider(IBaseLabelProvider<E> oldProvider) {
 		oldProvider.dispose();
 	}
 }

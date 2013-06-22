@@ -16,9 +16,9 @@ import org.eclipse.swt.graphics.Image;
  * Extends <code>IBaseLabelProvider</code> with the methods
  * to provide the text and/or image for the label of a given element. 
  * Used by most structured viewers, except table viewers.
- * @param <E> 
+ * @param <E> Type of an element of the model
  */
-public interface ILabelProvider<E> extends IBaseLabelProvider {
+public interface ILabelProvider<E> extends IBaseLabelProvider<E> {
     /**
      * Returns the image for the label of the given element.  The image
      * is owned by the label provider and must not be disposed directly.

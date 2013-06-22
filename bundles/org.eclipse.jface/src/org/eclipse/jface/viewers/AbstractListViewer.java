@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Widget;
  * Abstract base class for viewers that contain lists of items (such as a combo or list).
  * Most of the viewer implementation is in this base class, except for the minimal code that
  * actually communicates with the underlying widget.
- * @param <E> 
+ * @param <E> Type of an element of the model
  * 
  * @see org.eclipse.jface.viewers.ListViewer
  * @see org.eclipse.jface.viewers.ComboViewer

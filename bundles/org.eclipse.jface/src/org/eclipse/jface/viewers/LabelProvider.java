@@ -26,9 +26,9 @@ import org.eclipse.swt.graphics.Image;
  * <li><code>dispose</code></li>
  * </ul>
  * </p>
- * @param <E> 
+ * @param <E> Type of an element of the model
  */
-public class LabelProvider<E> extends BaseLabelProvider implements ILabelProvider<E> {
+public class LabelProvider<E> extends BaseLabelProvider<E> implements ILabelProvider<E> {
 
 	/**
 	 * Creates a new label provider.

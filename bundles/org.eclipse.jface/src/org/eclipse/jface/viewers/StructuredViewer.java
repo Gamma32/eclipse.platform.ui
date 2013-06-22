@@ -52,7 +52,7 @@ import org.eclipse.swt.widgets.Widget;
  * <code>addFilter</code>). When the viewer receives an update, it asks each
  * of its filters if it is out of date, and refilters elements as required.
  * </p>
- * @param <E> 
+ * @param <E> Type of an element of the model
  * 
  * @see ViewerFilter
  * @see ViewerComparator
@@ -175,7 +175,7 @@ public abstract class StructuredViewer<E> extends ContentViewer<E> implements IP
 		 * @see IColorProvider
 		 * @see IFontProvider
 		 */
-		public ColorAndFontCollectorWithProviders(IBaseLabelProvider provider) {
+		public ColorAndFontCollectorWithProviders(IBaseLabelProvider<E> provider) {
 			super();
 			if (provider instanceof IColorProvider) {
 				colorProvider = (IColorProvider) provider;
@@ -2151,7 +2151,7 @@ public abstract class StructuredViewer<E> extends ContentViewer<E> implements IP
 			needsUpdate = true;
 		} else {
 			needsUpdate = false;
-			IBaseLabelProvider labelProvider = getLabelProvider();
+			IBaseLabelProvider<E> labelProvider = getLabelProvider();
 			for (int i = 0; i < properties.length; ++i) {
 				needsUpdate = labelProvider.isLabelProperty(element, properties[i]);
 				if (needsUpdate) {
@@ -2235,7 +2235,7 @@ public abstract class StructuredViewer<E> extends ContentViewer<E> implements IP
 	 * @param updateLabel The ViewerLabel to collect the result in
 	 * @param element The element being decorated.
 	 */
-	protected void buildLabel(ViewerLabel updateLabel, Object element){
+	protected void buildLabel(ViewerLabel updateLabel, E element){
 
 		if (getLabelProvider() instanceof IViewerLabelProvider) {
 			IViewerLabelProvider itemProvider = (IViewerLabelProvider) getLabelProvider();
@@ -2259,7 +2259,7 @@ public abstract class StructuredViewer<E> extends ContentViewer<E> implements IP
 		} 
 		
 		if(getLabelProvider() instanceof ILabelProvider){
-			ILabelProvider labelProvider = (ILabelProvider) getLabelProvider();
+			ILabelProvider<E> labelProvider = (ILabelProvider<E>) getLabelProvider();
 			updateLabel.setText(labelProvider.getText(element));
 			updateLabel.setImage(labelProvider.getImage(element));
 		}
@@ -2324,7 +2324,7 @@ public abstract class StructuredViewer<E> extends ContentViewer<E> implements IP
 	 * @param element The element being decorated.
 	 * @param labelProvider ILabelProvider the labelProvider for the receiver.
 	 */
-	void buildLabel(ViewerLabel updateLabel, Object element,ILabelProvider labelProvider){
+	void buildLabel(ViewerLabel updateLabel, E element,ILabelProvider<E> labelProvider){
 			updateLabel.setText(labelProvider.getText(element));
 			updateLabel.setImage(labelProvider.getImage(element));
 	}

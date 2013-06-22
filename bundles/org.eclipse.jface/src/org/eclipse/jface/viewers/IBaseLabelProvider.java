@@ -34,7 +34,7 @@ package org.eclipse.jface.viewers;
  * it is the responsibility of the user to ensure <code>dispose</code>
  * is called when the provider is no longer needed.
  * </p>
- * @param <E> 
+ * @param <E> Type of an element of the model
  *
  * @see ILabelProvider
  * @see ITableLabelProvider

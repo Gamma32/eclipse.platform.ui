@@ -29,7 +29,7 @@ import org.eclipse.swt.widgets.Control;
  * and configured with a domain-specific content provider, label provider, element
  * filter (optional), and element sorter (optional).
  * </p>
- * @param <E> 
+ * @param <E> Type of an element of the model
  * 
  * @see org.eclipse.jface.viewers.ListViewer
  * @since 3.0 (made non-final in 3.4)
