@@ -54,7 +54,7 @@ public abstract class ContentViewer<E> extends Viewer {
     /**
      * This viewer's content provider, or <code>null</code> if none.
      */
-    private IContentProvider contentProvider = null;
+    private IContentProvider<E> contentProvider = null;
 
     /**
      * This viewer's input, or <code>null</code> if none.
@@ -120,7 +120,7 @@ public abstract class ContentViewer<E> extends Viewer {
      *
      * @return the content provider, or <code>null</code> if none
      */
-    public IContentProvider getContentProvider() {
+    public IContentProvider<E> getContentProvider() {
         return contentProvider;
     }
 
@@ -242,9 +242,9 @@ public abstract class ContentViewer<E> extends Viewer {
      * @param contentProvider the content provider
      * @see #getContentProvider
      */
-    public void setContentProvider(IContentProvider contentProvider) {
+    public void setContentProvider(IContentProvider<E> contentProvider) {
         Assert.isNotNull(contentProvider);
-        IContentProvider oldContentProvider = this.contentProvider;
+        IContentProvider<E> oldContentProvider = this.contentProvider;
         this.contentProvider = contentProvider;
         if (oldContentProvider != null) {
             Object currentInput = getInput();

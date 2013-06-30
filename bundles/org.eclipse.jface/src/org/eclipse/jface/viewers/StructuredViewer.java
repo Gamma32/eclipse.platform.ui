@@ -1010,7 +1010,7 @@ public abstract class StructuredViewer<E> extends ContentViewer<E> implements IP
 	protected Object[] getRawChildren(Object parent) {
 		Object[] result = null;
 		if (parent != null) {
-			IStructuredContentProvider cp = (IStructuredContentProvider) getContentProvider();
+			IStructuredContentProvider<E> cp = (IStructuredContentProvider<E>) getContentProvider();
 			if (cp != null) {
 				result = cp.getElements(parent);
 				assertElementsNotNull(result);
@@ -1668,7 +1668,7 @@ public abstract class StructuredViewer<E> extends ContentViewer<E> implements IP
 	 * @see org.eclipse.jface.viewers.ContentViewer#setContentProvider(org.eclipse.jface.viewers.IContentProvider)
 	 */
 	@Override
-	public void setContentProvider(IContentProvider provider) {
+	public void setContentProvider(IContentProvider<E> provider) {
 		assertContentProviderType(provider);
 		super.setContentProvider(provider);
 	}
@@ -1678,7 +1678,7 @@ public abstract class StructuredViewer<E> extends ContentViewer<E> implements IP
 	 * supported types.
 	 * @param provider
 	 */
-	protected void assertContentProviderType(IContentProvider provider) {
+	protected void assertContentProviderType(IContentProvider<E> provider) {
 		Assert.isTrue(provider instanceof IStructuredContentProvider);
 	}
 
