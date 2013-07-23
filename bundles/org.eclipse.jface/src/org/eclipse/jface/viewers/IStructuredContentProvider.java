@@ -13,10 +13,11 @@ package org.eclipse.jface.viewers;
 /**
  * An interface to content providers for structured viewers.
  * @param <E> 
+ * @param <T> 
  *
  * @see StructuredViewer
  */
-public interface IStructuredContentProvider<E> extends IContentProvider<E> {
+public interface IStructuredContentProvider<E,T> extends IContentProvider<T> {
     /**
      * Returns the elements to display in the viewer 
      * when its input is set to the given element. 
@@ -26,5 +27,5 @@ public interface IStructuredContentProvider<E> extends IContentProvider<E> {
      * @param inputElement the input element
      * @return the array of elements to display in the viewer
      */
-    public E[] getElements(Object inputElement);
+    public E[] getElements(T inputElement);
 }

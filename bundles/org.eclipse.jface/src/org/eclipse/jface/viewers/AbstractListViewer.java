@@ -26,13 +26,14 @@ import org.eclipse.swt.widgets.Widget;
  * Most of the viewer implementation is in this base class, except for the minimal code that
  * actually communicates with the underlying widget.
  * @param <E> Type of an element of the model
+ * @param <T> Type of input
  * 
  * @see org.eclipse.jface.viewers.ListViewer
  * @see org.eclipse.jface.viewers.ComboViewer
  * 
  * @since 3.0
  */
-public abstract class AbstractListViewer<E> extends StructuredViewer<E> {
+public abstract class AbstractListViewer<E,T> extends StructuredViewer<E,T> {
 
     /**
      * A list of viewer elements (element type: <code>Object</code>).

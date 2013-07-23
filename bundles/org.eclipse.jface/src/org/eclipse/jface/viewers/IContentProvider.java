@@ -48,5 +48,5 @@ public interface IContentProvider<E> {
      * @param newInput the new input element, or <code>null</code> if the viewer
      *   does not have an input
      */
-    public void inputChanged(Viewer viewer, Object oldInput, Object newInput);
+    public void inputChanged(Viewer<E> viewer, E oldInput, E newInput);
 }

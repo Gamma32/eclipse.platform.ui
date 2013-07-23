@@ -30,11 +30,12 @@ import org.eclipse.swt.widgets.Control;
  * filter (optional), and element sorter (optional).
  * </p>
  * @param <E> Type of an element of the model
+ * @param <T> Type of Input
  * 
  * @see org.eclipse.jface.viewers.ListViewer
  * @since 3.0 (made non-final in 3.4)
  */
-public class ComboViewer<E> extends AbstractListViewer<E> {
+public class ComboViewer<E,T> extends AbstractListViewer<E,T> {
 
     /**
      * This viewer's list control if this viewer is instantiated with a combo control; otherwise

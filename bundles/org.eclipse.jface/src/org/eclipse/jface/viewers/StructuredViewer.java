@@ -53,11 +53,12 @@ import org.eclipse.swt.widgets.Widget;
  * of its filters if it is out of date, and refilters elements as required.
  * </p>
  * @param <E> Type of an element of the model
+ * @param <T> Type of input
  * 
  * @see ViewerFilter
  * @see ViewerComparator
  */
-public abstract class StructuredViewer<E> extends ContentViewer<E> implements IPostSelectionProvider {
+public abstract class StructuredViewer<E,T> extends ContentViewer<E,T> implements IPostSelectionProvider {
 
 	/**
 	 * A map from the viewer's model elements to SWT widgets. (key type:
@@ -918,7 +919,7 @@ public abstract class StructuredViewer<E> extends ContentViewer<E> implements IP
 	 *            the parent element
 	 * @return a filtered array of child elements
 	 */
-	protected Object[] getFilteredChildren(Object parent) {
+	protected Object[] getFilteredChildren(T parent) {
 		Object[] result = getRawChildren(parent);
 		if (filters != null) {
 			for (Iterator iter = filters.iterator(); iter.hasNext();) {
@@ -1007,10 +1008,10 @@ public abstract class StructuredViewer<E> extends ContentViewer<E> implements IP
 	 *            the parent element
 	 * @return the child elements
 	 */
-	protected Object[] getRawChildren(Object parent) {
-		Object[] result = null;
+	protected Object[] getRawChildren(T parent) {
+		E[] result = null;
 		if (parent != null) {
-			IStructuredContentProvider<E> cp = (IStructuredContentProvider<E>) getContentProvider();
+			IStructuredContentProvider<E,T> cp = (IStructuredContentProvider<E,T>) getContentProvider();
 			if (cp != null) {
 				result = cp.getElements(parent);
 				assertElementsNotNull(result);
@@ -1029,7 +1030,7 @@ public abstract class StructuredViewer<E> extends ContentViewer<E> implements IP
 	 * 
 	 * @return the root element, or <code>null</code> if none
 	 */
-	protected Object getRoot() {
+	protected T getRoot() {
 		return getInput();
 	}
 
@@ -1069,7 +1070,7 @@ public abstract class StructuredViewer<E> extends ContentViewer<E> implements IP
 	 *            the parent element
 	 * @return a sorted and filtered array of child elements
 	 */
-	protected Object[] getSortedChildren(Object parent) {
+	protected Object[] getSortedChildren(T parent) {
 		Object[] result = getFilteredChildren(parent);
 		if (sorter != null) {
 			// be sure we're not modifying the original array from the model
@@ -1668,7 +1669,7 @@ public abstract class StructuredViewer<E> extends ContentViewer<E> implements IP
 	 * @see org.eclipse.jface.viewers.ContentViewer#setContentProvider(org.eclipse.jface.viewers.IContentProvider)
 	 */
 	@Override
-	public void setContentProvider(IContentProvider<E> provider) {
+	public void setContentProvider(IContentProvider<T> provider) {
 		assertContentProviderType(provider);
 		super.setContentProvider(provider);
 	}
@@ -1678,7 +1679,7 @@ public abstract class StructuredViewer<E> extends ContentViewer<E> implements IP
 	 * supported types.
 	 * @param provider
 	 */
-	protected void assertContentProviderType(IContentProvider<E> provider) {
+	protected void assertContentProviderType(IContentProvider<T> provider) {
 		Assert.isTrue(provider instanceof IStructuredContentProvider);
 	}
 
@@ -1687,7 +1688,7 @@ public abstract class StructuredViewer<E> extends ContentViewer<E> implements IP
 	 * @see org.eclipse.jface.viewers.Viewer#setInput(java.lang.Object)
 	 */
 	@Override
-	public final void setInput(Object input) {
+	public final void setInput(T input) {
 		Control control = getControl();
 		if (control == null || control.isDisposed()) {
 			throw new IllegalStateException(
