@@ -131,18 +131,18 @@ public abstract class AbstractListViewer<E,I> extends StructuredViewer<E,I> {
      *
      * @param elements the elements to add
      */
-    public void add(Object[] elements) {
+    public void add(E[] elements) {
         assertElementsNotNull(elements);
         Object[] filtered = filter(elements);
-        ILabelProvider labelProvider = (ILabelProvider) getLabelProvider();
+        ILabelProvider<E> labelProvider = (ILabelProvider<E>) getLabelProvider();
         for (int i = 0; i < filtered.length; i++) {
-            Object element = filtered[i];
+            E element = (E)filtered[i];
             int ix = indexForElement(element);
             insertItem(labelProvider, element, ix);
         }
     }
     
-    private void insertItem(ILabelProvider labelProvider, Object element, int index) {
+    private void insertItem(ILabelProvider<E> labelProvider, E element, int index) {
         listAdd(getLabelProviderText(labelProvider, element), index);
 		listMap.add(index, element);
 		mapElement(element, getControl()); // must map it, since findItem only looks in map, if enabled
@@ -165,13 +165,13 @@ public abstract class AbstractListViewer<E,I> extends StructuredViewer<E,I> {
 	 *            the last position
 	 * @since 3.3
 	 */
-    public void insert(Object element, int position) {
+    public void insert(E element, int position) {
     	if (getComparator() != null || hasFilters()) {
     		add(element);
     		return;
     	}
     	
-    	insertItem((ILabelProvider) getLabelProvider(), element, position);
+    	insertItem((ILabelProvider<E>) getLabelProvider(), element, position);
     }
     
     
@@ -185,7 +185,7 @@ public abstract class AbstractListViewer<E,I> extends StructuredViewer<E,I> {
      * 
      * @since 3.1
      */
-    private String getLabelProviderText(ILabelProvider labelProvider, Object element){
+    private String getLabelProviderText(ILabelProvider<E> labelProvider, E element){
     	String text = labelProvider.getText(element);
         if(text == null) {
 			return "";//$NON-NLS-1$
@@ -216,7 +216,7 @@ public abstract class AbstractListViewer<E,I> extends StructuredViewer<E,I> {
      * Since SWT.List doesn't use items we always return the List itself.
      */
     @Override
-	protected Widget doFindInputItem(Object element) {
+	protected Widget doFindInputItem(E element) {
         if (element != null && equals(element, getRoot())) {
 			return getControl();
 		}
@@ -228,7 +228,7 @@ public abstract class AbstractListViewer<E,I> extends StructuredViewer<E,I> {
      * Since SWT.List doesn't use items we always return the List itself.
      */
     @Override
-	protected Widget doFindItem(Object element) {
+	protected Widget doFindItem(E element) {
         if (element != null) {
             if (listMapContains(element)) {
 				return getControl();
@@ -241,11 +241,11 @@ public abstract class AbstractListViewer<E,I> extends StructuredViewer<E,I> {
      * Method declared on StructuredViewer.
      */
     @Override
-	protected void doUpdateItem(Widget data, Object element, boolean fullMap) {
+	protected void doUpdateItem(Widget data, E element, boolean fullMap) {
         if (element != null) {
             int ix = getElementIndex(element);
             if (ix >= 0) {
-                ILabelProvider labelProvider = (ILabelProvider) getLabelProvider();
+                ILabelProvider<E> labelProvider = (ILabelProvider<E>) getLabelProvider();
                 listSetItem(ix, getLabelProviderText(labelProvider,element));
             }
         }
@@ -272,7 +272,7 @@ public abstract class AbstractListViewer<E,I> extends StructuredViewer<E,I> {
      * viewers will be an instance of <code>ILabelProvider</code>.
      */
     @Override
-	public IBaseLabelProvider getLabelProvider() {
+	public IBaseLabelProvider<E> getLabelProvider() {
         return super.getLabelProvider();
     }
 
@@ -335,16 +335,16 @@ public abstract class AbstractListViewer<E,I> extends StructuredViewer<E,I> {
      * Method declared on Viewer.
      */
     @Override
-	protected void inputChanged(Object input, Object oldInput) {
+	protected void inputChanged(I input, I oldInput) {
         listMap.clear();
-        Object[] children = getSortedChildren(getRoot());
+        E[] children = getSortedChildren(getRoot());
         int size = children.length;
 
         listRemoveAll();
         String[] labels = new String[size];
         for (int i = 0; i < size; i++) {
-            Object el = children[i];
-            labels[i] = getLabelProviderText((ILabelProvider) getLabelProvider(),el);
+            E el = children[i];
+            labels[i] = getLabelProviderText((ILabelProvider<E>) getLabelProvider(),el);
             listMap.add(el);
             mapElement(el, getControl()); // must map it, since findItem only looks in map, if enabled
         }
@@ -355,7 +355,7 @@ public abstract class AbstractListViewer<E,I> extends StructuredViewer<E,I> {
      * Method declared on StructuredViewer.
      */
     @Override
-	protected void internalRefresh(Object element) {
+	protected void internalRefresh(E element) {
         Control list = getControl();
         if (element == null || equals(element, getRoot())) {
             // the parent
@@ -370,7 +370,7 @@ public abstract class AbstractListViewer<E,I> extends StructuredViewer<E,I> {
             	topIndex = listGetTopIndex();
             }
             
-            Object[] children = null;
+            E[] children = null;
             list.setRedraw(false);
             try {
 				listRemoveAll();
@@ -378,10 +378,10 @@ public abstract class AbstractListViewer<E,I> extends StructuredViewer<E,I> {
 	            children = getSortedChildren(getRoot());
 				String[] items = new String[children.length];
 				
-				ILabelProvider labelProvider = (ILabelProvider) getLabelProvider();
+				ILabelProvider<E> labelProvider = (ILabelProvider<E>) getLabelProvider();
 				
 				for (int i = 0; i < items.length; i++) {
-	                Object el = children[i];
+	                E el = children[i];
 	                items[i] = getLabelProviderText(labelProvider, el);
 	                listMap.add(el);
 	                mapElement(el, list); // must map it, since findItem only looks in map, if enabled
@@ -430,7 +430,7 @@ public abstract class AbstractListViewer<E,I> extends StructuredViewer<E,I> {
      *
      * @param elements the elements to remove
      */
-    private void internalRemove(final Object[] elements) {
+    private void internalRemove(final E[] elements) {
         Object input = getInput();
         for (int i = 0; i < elements.length; ++i) {
             if (equals(elements[i], input)) {
@@ -457,7 +457,7 @@ public abstract class AbstractListViewer<E,I> extends StructuredViewer<E,I> {
      *
      * @param elements the elements to remove
      */
-    public void remove(final Object[] elements) {
+    public void remove(final E[] elements) {
         assertElementsNotNull(elements);
         if (elements.length == 0) {
         	return;
@@ -495,7 +495,7 @@ public abstract class AbstractListViewer<E,I> extends StructuredViewer<E,I> {
 	 * {@link IFontProvider} have no effect for this type of viewer</b>
 	 */
     @Override
-	public void setLabelProvider(IBaseLabelProvider labelProvider) {
+	public void setLabelProvider(IBaseLabelProvider<E> labelProvider) {
         Assert.isTrue(labelProvider instanceof ILabelProvider);
         super.setLabelProvider(labelProvider);
     }
