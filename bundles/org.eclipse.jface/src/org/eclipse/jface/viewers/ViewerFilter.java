@@ -19,10 +19,13 @@ import java.util.ArrayList;
  * Subclasses must implement the <code>select</code> method
  * and may implement the <code>isFilterProperty</code> method.
  * </p>
+ * 
+ * @param <E> Type of an element of the model
+ * @param <I> Type of input
  * @see IStructuredContentProvider
  * @see StructuredViewer
  */
-public abstract class ViewerFilter {
+public abstract class ViewerFilter<E,I> {
     /**
      * Creates a new viewer filter.
      */
@@ -43,16 +46,16 @@ public abstract class ViewerFilter {
      * @param elements the elements to filter
      * @return the filtered elements
      */
-    public Object[] filter(Viewer viewer, Object parent, Object[] elements) {
+    public E[] filter(Viewer<I> viewer, E parent, E[] elements) {
         int size = elements.length;
-        ArrayList out = new ArrayList(size);
+        ArrayList<E> out = new ArrayList<E>(size);
         for (int i = 0; i < size; ++i) {
-            Object element = elements[i];
+            E element = elements[i];
             if (select(viewer, parent, element)) {
 				out.add(element);
 			}
         }
-        return out.toArray();
+        return (E[]) out.toArray();
     }
 
     /**
@@ -69,7 +72,7 @@ public abstract class ViewerFilter {
      * @return the filtered elements
      * @since 3.2
      */
-    public Object[] filter(Viewer viewer, TreePath parentPath, Object[] elements) {
+    public E[] filter(Viewer<I> viewer, TreePath<E> parentPath, E[] elements) {
         return filter(viewer, parentPath.getLastSegment(), elements);
     }
     
@@ -99,6 +102,6 @@ public abstract class ViewerFilter {
      * @return <code>true</code> if element is included in the
      *   filtered set, and <code>false</code> if excluded
      */
-    public abstract boolean select(Viewer viewer, Object parentElement,
-            Object element);
+    public abstract boolean select(Viewer<I> viewer, E parentElement,
+            E element);
 }

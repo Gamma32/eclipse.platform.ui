@@ -46,7 +46,7 @@ import org.eclipse.jface.util.SafeRunnable;
  * </p>
  * @param <I> Type of Input
  */
-public abstract class Viewer<I> implements IInputSelectionProvider {
+public abstract class Viewer<I> implements IInputSelectionProvider<I> {
 
     /**
      * List of selection change listeners (element type: <code>ISelectionChangedListener</code>).
@@ -206,7 +206,7 @@ public abstract class Viewer<I> implements IInputSelectionProvider {
     /* (non-Javadoc)
      * Copy-down of method declared on <code>IInputProvider</code>.
      */
-    public abstract Object getInput();
+    public abstract I getInput();
 
     /* (non-Javadoc)
      * Copy-down of method declared on <code>ISelectionProvider</code>.

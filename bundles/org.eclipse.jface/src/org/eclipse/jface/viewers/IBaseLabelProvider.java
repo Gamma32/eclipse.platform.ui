@@ -74,7 +74,7 @@ public interface IBaseLabelProvider<E> {
      * @return <code>true</code> if the label would be affected,
      *    and <code>false</code> if it would be unaffected
      */
-    public boolean isLabelProperty(Object element, String property);
+    public boolean isLabelProperty(E element, String property);
 
     /**
      * Removes a listener to this label provider.

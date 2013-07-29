@@ -27,5 +27,5 @@ public interface IStructuredContentProvider<E,I> extends IContentProvider<I> {
      * @param inputElement the input element
      * @return the array of elements to display in the viewer
      */
-    public E[] getElements(I inputElement);
+    public E[] getElements(E inputElement);
 }

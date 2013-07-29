@@ -12,12 +12,14 @@ package org.eclipse.jface.viewers;
 
 /**
  * Interface common to all objects that provide an input.
+ * 
+ * @param <I> Type of Input
  */
-public interface IInputProvider {
+public interface IInputProvider<I> {
     /**
      * Returns the input.
      *
      * @return the input object
      */
-    public Object getInput();
+    public I getInput();
 }
