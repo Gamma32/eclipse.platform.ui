@@ -52,11 +52,13 @@ import org.eclipse.swt.widgets.Widget;
  * <code>addFilter</code>). When the viewer receives an update, it asks each
  * of its filters if it is out of date, and refilters elements as required.
  * </p>
+ * @param <E> Type of an single element of the model
+ * @param <I> Type of the input
  * 
  * @see ViewerFilter
  * @see ViewerComparator
  */
-public abstract class StructuredViewer extends ContentViewer implements IPostSelectionProvider {
+public abstract class StructuredViewer<E,I> extends ContentViewer<E,I> implements IPostSelectionProvider {
 
 	/**
 	 * A map from the viewer's model elements to SWT widgets. (key type:
@@ -174,7 +176,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 		 * @see IColorProvider
 		 * @see IFontProvider
 		 */
-		public ColorAndFontCollectorWithProviders(IBaseLabelProvider provider) {
+		public ColorAndFontCollectorWithProviders(IBaseLabelProvider<E> provider) {
 			super();
 			if (provider instanceof IColorProvider) {
 				colorProvider = (IColorProvider) provider;
@@ -1686,7 +1688,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 * @see org.eclipse.jface.viewers.Viewer#setInput(java.lang.Object)
 	 */
 	@Override
-	public final void setInput(Object input) {
+	public final void setInput(I input) {
 		Control control = getControl();
 		if (control == null || control.isDisposed()) {
 			throw new IllegalStateException(
