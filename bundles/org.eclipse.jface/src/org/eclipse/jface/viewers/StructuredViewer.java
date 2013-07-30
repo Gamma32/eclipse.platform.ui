@@ -83,7 +83,7 @@ public abstract class StructuredViewer<E,I> extends ContentViewer<E,I> implement
 	 * This viewer's filters (element type: <code>ViewerFilter</code>).
 	 * <code>null</code> means there are no filters.
 	 */
-	private List filters;
+	private List<ViewerFilter> filters;
 
 	/**
 	 * Indicates whether the viewer should attempt to preserve the selection
@@ -586,7 +586,7 @@ public abstract class StructuredViewer<E,I> extends ContentViewer<E,I> implement
 	 */
 	public void addFilter(ViewerFilter filter) {
 		if (filters == null) {
-			filters = new ArrayList();
+			filters = new ArrayList<ViewerFilter>();
 		}
 		filters.add(filter);
 		refresh();
@@ -1367,7 +1367,7 @@ public abstract class StructuredViewer<E,I> extends ContentViewer<E,I> implement
 
 		if (filters != null) {
 			for (int i = 0, n = filters.size(); i < n; ++i) {
-				ViewerFilter filter = (ViewerFilter) filters.get(i);
+				ViewerFilter filter = filters.get(i);
 				if (filter.isFilterProperty(element, property)) {
 					return true;
 				}
@@ -1609,8 +1609,8 @@ public abstract class StructuredViewer<E,I> extends ContentViewer<E,I> implement
 		if (filters != null) {
 			// Note: can't use List.remove(Object). Use identity comparison
 			// instead.
-			for (Iterator i = filters.iterator(); i.hasNext();) {
-				Object o = i.next();
+			for (Iterator<ViewerFilter> i = filters.iterator(); i.hasNext();) {
+				ViewerFilter o = i.next();
 				if (o == filter) {
 					i.remove();
 					refresh();
