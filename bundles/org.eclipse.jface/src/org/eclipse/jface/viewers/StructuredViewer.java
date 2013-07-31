@@ -1285,7 +1285,7 @@ public abstract class StructuredViewer<E,I> extends ContentViewer<E,I> implement
 	 * @param element
 	 *            the element
 	 */
-	protected abstract void internalRefresh(I element);
+	protected abstract void internalRefresh(Object element);
 
 	/**
 	 * Refreshes this viewer starting at the given element. Labels are updated
@@ -1308,7 +1308,7 @@ public abstract class StructuredViewer<E,I> extends ContentViewer<E,I> implement
 	 * 
 	 * @since 2.0
 	 */
-	protected void internalRefresh(I element, boolean updateLabels) {
+	protected void internalRefresh(Object element, boolean updateLabels) {
 		internalRefresh(element);
 	}
 
@@ -1514,9 +1514,9 @@ public abstract class StructuredViewer<E,I> extends ContentViewer<E,I> implement
 	 * </p>
 	 * 
 	 * @param element
-	 *            the element
+	 *            the element (Type E) which should be refreshed. Can also be the input (Type I)
 	 */
-	public void refresh(final I element) {
+	public void refresh(final Object element) {
 		preservingSelection(new Runnable() {
 			public void run() {
 				internalRefresh(element);
@@ -1535,7 +1535,7 @@ public abstract class StructuredViewer<E,I> extends ContentViewer<E,I> implement
 	 * </p>
 	 * 
 	 * @param element
-	 *            the element
+	 *            the element (Type E) which should be refreshed. Can also be the input (Type I)
 	 * @param updateLabels
 	 *            <code>true</code> to update labels for existing elements,
 	 *            <code>false</code> to only update labels as needed, assuming
@@ -1543,7 +1543,7 @@ public abstract class StructuredViewer<E,I> extends ContentViewer<E,I> implement
 	 * 
 	 * @since 2.0
 	 */
-	public void refresh(final I element, final boolean updateLabels) {
+	public void refresh(final Object element, final boolean updateLabels) {
 		preservingSelection(new Runnable() {
 			public void run() {
 				internalRefresh(element, updateLabels);

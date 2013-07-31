@@ -354,7 +354,7 @@ public abstract class AbstractListViewer<E,I> extends StructuredViewer<E,I> {
      * Method declared on StructuredViewer.
      */
     @Override
-	protected void internalRefresh(E element) {
+	protected void internalRefresh(Object element) {
         Control list = getControl();
         if (element == null || equals(element, getRoot())) {
             // the parent
@@ -397,7 +397,9 @@ public abstract class AbstractListViewer<E,I> extends StructuredViewer<E,I> {
 				listSetTopIndex(Math.min(topIndex, children.length));
             }
         } else {
-            doUpdateItem(list, element, true);
+        	@SuppressWarnings("unchecked")
+			E singleElement = (E) element;
+            doUpdateItem(list, singleElement, true);
         }
     }
     
