@@ -1033,8 +1033,8 @@ public abstract class StructuredViewer<E,I> extends ContentViewer<E,I> implement
 	 * 
 	 * @return the root element, or <code>null</code> if none
 	 */
-	protected E getRoot() {
-		return (E)getInput();
+	protected I getRoot() {
+		return getInput();
 	}
 
 	/**
@@ -1285,7 +1285,7 @@ public abstract class StructuredViewer<E,I> extends ContentViewer<E,I> implement
 	 * @param element
 	 *            the element
 	 */
-	protected abstract void internalRefresh(E element);
+	protected abstract void internalRefresh(I element);
 
 	/**
 	 * Refreshes this viewer starting at the given element. Labels are updated
@@ -1308,7 +1308,7 @@ public abstract class StructuredViewer<E,I> extends ContentViewer<E,I> implement
 	 * 
 	 * @since 2.0
 	 */
-	protected void internalRefresh(E element, boolean updateLabels) {
+	protected void internalRefresh(I element, boolean updateLabels) {
 		internalRefresh(element);
 	}
 
@@ -1516,7 +1516,7 @@ public abstract class StructuredViewer<E,I> extends ContentViewer<E,I> implement
 	 * @param element
 	 *            the element
 	 */
-	public void refresh(final E element) {
+	public void refresh(final I element) {
 		preservingSelection(new Runnable() {
 			public void run() {
 				internalRefresh(element);
@@ -1543,7 +1543,7 @@ public abstract class StructuredViewer<E,I> extends ContentViewer<E,I> implement
 	 * 
 	 * @since 2.0
 	 */
-	public void refresh(final E element, final boolean updateLabels) {
+	public void refresh(final I element, final boolean updateLabels) {
 		preservingSelection(new Runnable() {
 			public void run() {
 				internalRefresh(element, updateLabels);
