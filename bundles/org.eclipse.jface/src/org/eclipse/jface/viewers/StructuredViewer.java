@@ -84,7 +84,7 @@ public abstract class StructuredViewer<E,I> extends ContentViewer<E,I> implement
 	 * This viewer's filters (element type: <code>ViewerFilter</code>).
 	 * <code>null</code> means there are no filters.
 	 */
-	private List<ViewerFilter> filters;
+	private List<ViewerFilter<E,I>> filters;
 
 	/**
 	 * Indicates whether the viewer should attempt to preserve the selection
@@ -587,9 +587,9 @@ public abstract class StructuredViewer<E,I> extends ContentViewer<E,I> implement
 	 *            a viewer filter
 	 * @see StructuredViewer#setFilters(ViewerFilter[])
 	 */
-	public void addFilter(ViewerFilter filter) {
+	public void addFilter(ViewerFilter<E,I> filter) {
 		if (filters == null) {
-			filters = new ArrayList<ViewerFilter>();
+			filters = new ArrayList<ViewerFilter<E,I>>();
 		}
 		filters.add(filter);
 		refresh();
@@ -925,9 +925,9 @@ public abstract class StructuredViewer<E,I> extends ContentViewer<E,I> implement
 	protected E[] getFilteredChildren(I parent) {
 		E[] result = getRawChildren(parent);
 		if (filters != null) {
-			for (Iterator<ViewerFilter> iter = filters.iterator(); iter.hasNext();) {
-				ViewerFilter f = iter.next();
-				E[] filteredResult = (E[]) f.filter(this, parent, result);
+			for (Iterator<ViewerFilter<E,I>> iter = filters.iterator(); iter.hasNext();) {
+				ViewerFilter<E,I> f = iter.next();
+				E[] filteredResult = f.filter(this, parent, result);
 				if (associateListener != null && filteredResult.length != result.length) {
 					notifyFilteredOut(result, filteredResult);
 				}
@@ -966,11 +966,13 @@ public abstract class StructuredViewer<E,I> extends ContentViewer<E,I> implement
 	 * @return an array of viewer filters
 	 * @see StructuredViewer#setFilters(ViewerFilter[])
 	 */
-	public ViewerFilter[] getFilters() {
+	public ViewerFilter<E,I>[] getFilters() {
+		ViewerFilter<E,I>[] result;
 		if (filters == null) {
-			return new ViewerFilter[0];
+			result = new ViewerFilter[0];
+		}else{
+			result = new ViewerFilter[filters.size()];
 		}
-		ViewerFilter[] result = new ViewerFilter[filters.size()];
 		filters.toArray(result);
 		return result;
 	}
@@ -1370,14 +1372,14 @@ public abstract class StructuredViewer<E,I> extends ContentViewer<E,I> implement
 	 * @return <code>true</code> if refiltering is required, and
 	 *         <code>false</code> otherwise
 	 */
-	protected boolean needsRefilter(Object element, String property) {
+	protected boolean needsRefilter(E element, String property) {
 		if (sorter != null && sorter.isSorterProperty(element, property)) {
 			return true;
 		}
 
 		if (filters != null) {
 			for (int i = 0, n = filters.size(); i < n; ++i) {
-				ViewerFilter filter = filters.get(i);
+				ViewerFilter<E,I> filter = filters.get(i);
 				if (filter.isFilterProperty(element, property)) {
 					return true;
 				}
@@ -1614,13 +1616,13 @@ public abstract class StructuredViewer<E,I> extends ContentViewer<E,I> implement
 	 *            a viewer filter
 	 * @see StructuredViewer#setFilters(ViewerFilter[])
 	 */
-	public void removeFilter(ViewerFilter filter) {
+	public void removeFilter(ViewerFilter<E,I> filter) {
 		Assert.isNotNull(filter);
 		if (filters != null) {
 			// Note: can't use List.remove(Object). Use identity comparison
 			// instead.
-			for (Iterator<ViewerFilter> i = filters.iterator(); i.hasNext();) {
-				ViewerFilter o = i.next();
+			for (Iterator<ViewerFilter<E,I>> i = filters.iterator(); i.hasNext();) {
+				ViewerFilter<E,I> o = i.next();
 				if (o == filter) {
 					i.remove();
 					refresh();
@@ -1645,11 +1647,11 @@ public abstract class StructuredViewer<E,I> extends ContentViewer<E,I> implement
 	 *            an array of viewer filters
 	 * @since 3.3
 	 */
-	public void setFilters(ViewerFilter[] filters) {
+	public void setFilters(ViewerFilter<E,I>[] filters) {
 		if (filters.length == 0) {
 			resetFilters();
 		} else {
-			this.filters = new ArrayList<ViewerFilter>(Arrays.asList(filters));
+			this.filters = new ArrayList<ViewerFilter<E,I>>(Arrays.asList(filters));
 			refresh();
 		}
 	}
