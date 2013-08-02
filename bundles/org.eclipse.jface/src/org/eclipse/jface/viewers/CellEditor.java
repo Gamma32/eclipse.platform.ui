@@ -40,8 +40,10 @@ import org.eclipse.jface.util.SafeRunnable;
  * <li><code>DialogCellEditor</code> - value from arbitrary dialog</li>
  * </ul>
  * </p>
+ * @param <E> 
+ * @param <V> 
  */
-public abstract class CellEditor {
+public abstract class CellEditor<E,V> {
 
 	/**
 	 * List of cell editor listeners (element type:
@@ -296,7 +298,7 @@ public abstract class CellEditor {
 	 * @return the value of this cell editor
 	 * @see #getValue
 	 */
-	protected abstract Object doGetValue();
+	protected abstract V doGetValue();
 
 	/**
 	 * Sets the focus to the cell editor's control.
@@ -318,7 +320,7 @@ public abstract class CellEditor {
 	 *            the value of this cell editor
 	 * @see #setValue
 	 */
-	protected abstract void doSetValue(Object value);
+	protected abstract void doSetValue(V value);
 
 	/**
 	 * Notifies all registered cell editor listeners of an apply event. Only
@@ -474,7 +476,7 @@ public abstract class CellEditor {
 	 * @return the value of this cell editor, or <code>null</code> if the cell
 	 *         editor does not contain a valid value
 	 */
-	public final Object getValue() {
+	public final V getValue() {
 		if (!valid) {
 			return null;
 		}
@@ -522,7 +524,7 @@ public abstract class CellEditor {
 	 * @return <code>true</code> if the value is valid, and <code>false</code>
 	 *         if invalid
 	 */
-	protected boolean isCorrect(Object value) {
+	protected boolean isCorrect(V value) {
 		errorMessage = null;
 		if (validator == null) {
 			return true;
@@ -851,7 +853,7 @@ public abstract class CellEditor {
 	 * @param value
 	 *            the value of this cell editor
 	 */
-	public final void setValue(Object value) {
+	public final void setValue(V value) {
 		valid = isCorrect(value);
 		dirty = false;
 		doSetValue(value);

@@ -17,11 +17,14 @@ import org.eclipse.core.runtime.Assert;
 
 /**
  * EditingSupport is the abstract superclass of the support for cell editing.
+ * @param <E> 
+ * @param <I> 
+ * @param <V> 
  *
  * @since 3.3
  *
  */
-public abstract class EditingSupport {
+public abstract class EditingSupport<E,I,V> {
 
 	private ColumnViewer viewer;
 
@@ -41,7 +44,7 @@ public abstract class EditingSupport {
 	 *            the model element
 	 * @return the CellEditor
 	 */
-	protected abstract CellEditor getCellEditor(Object element);
+	protected abstract CellEditor<E,V> getCellEditor(E element);
 
 	/**
 	 * Is the cell editable
@@ -50,7 +53,7 @@ public abstract class EditingSupport {
 	 *            the model element
 	 * @return true if editable
 	 */
-	protected abstract boolean canEdit(Object element);
+	protected abstract boolean canEdit(E element);
 
 	/**
 	 * Get the value to set to the editor
@@ -59,7 +62,7 @@ public abstract class EditingSupport {
 	 *            the model element
 	 * @return the value shown
 	 */
-	protected abstract Object getValue(Object element);
+	protected abstract V getValue(E element);
 
 	/**
 	 * Sets the new value on the given element. Note that implementers need to
@@ -77,7 +80,7 @@ public abstract class EditingSupport {
 	 * @param value
 	 *            the new value
 	 */
-	protected abstract void setValue(Object element, Object value);
+	protected abstract void setValue(E element, V value);
 
 	/**
 	 * @return the viewer this editing support works for
@@ -95,8 +98,8 @@ public abstract class EditingSupport {
 	 * @param cell
 	 *            the cell the editor is working for
 	 */
-	protected void initializeCellEditorValue(CellEditor cellEditor, ViewerCell cell) {
-		Object value = getValue(cell.getElement());
+	protected void initializeCellEditorValue(CellEditor<E,V> cellEditor, ViewerCell<E> cell) {
+		V value = getValue(cell.getElement());
 		cellEditor.setValue(value);
 	}
 
@@ -108,8 +111,8 @@ public abstract class EditingSupport {
 	 * @param cell
 	 * 			  the cell the editor is working for
 	 */
-	protected void saveCellEditorValue(CellEditor cellEditor, ViewerCell cell) {
-		Object value = cellEditor.getValue();
+	protected void saveCellEditorValue(CellEditor<E,V> cellEditor, ViewerCell<E> cell) {
+		V value = cellEditor.getValue();  
 		setValue(cell.getElement(), value);
 	}
 
