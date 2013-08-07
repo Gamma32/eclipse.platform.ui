@@ -56,13 +56,15 @@ import org.eclipse.swt.widgets.Widget;
  * Users setting up an editable table with more than 1 column <b>have</b> to pass the
  * SWT.FULL_SELECTION style bit
  * </p>
+ * @param <E> Type of an single element of the model
+ * @param <I> Type of the input
  * 
  * @see SWT#VIRTUAL
  * @see #doFindItem(Object)
  * @see #internalRefresh(Object, boolean)
  * @noextend This class is not intended to be subclassed by clients.
  */
-public class TableViewer extends AbstractTableViewer {
+public class TableViewer<E,I> extends AbstractTableViewer<E,I>  {
 	/**
 	 * This viewer's table control.
 	 */
@@ -403,7 +405,7 @@ public class TableViewer extends AbstractTableViewer {
 	 * @see org.eclipse.jface.viewers.AbstractTableViewer#remove(java.lang.Object[])
 	 */
 	@Override
-	public void remove(Object[] elements) {
+	public void remove(E[] elements) {
 		assertElementsNotNull(elements);
 		if (checkBusy())
 			return;
@@ -448,8 +450,8 @@ public class TableViewer extends AbstractTableViewer {
 	}
 	
 	@Override
-	protected Widget doFindItem(Object element) {
-		IContentProvider contentProvider = getContentProvider();
+	protected Widget doFindItem(E element) {
+		IContentProvider<I> contentProvider = getContentProvider();
 		if (contentProvider instanceof IIndexableLazyContentProvider) {
 			IIndexableLazyContentProvider indexable = (IIndexableLazyContentProvider) contentProvider;
 			int idx = indexable.findElement(element);

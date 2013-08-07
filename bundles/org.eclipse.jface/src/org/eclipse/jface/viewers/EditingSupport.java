@@ -26,13 +26,13 @@ import org.eclipse.core.runtime.Assert;
  */
 public abstract class EditingSupport<E,I,V> {
 
-	private ColumnViewer viewer;
+	private ColumnViewer<E,I> viewer;
 
 	/**
 	 * @param viewer
 	 *            a new viewer
 	 */
-	public EditingSupport(ColumnViewer viewer) {
+	public EditingSupport(ColumnViewer<E,I> viewer) {
 		Assert.isNotNull(viewer, "Viewer is not allowed to be null"); //$NON-NLS-1$
 		this.viewer = viewer;
 	}
@@ -85,7 +85,7 @@ public abstract class EditingSupport<E,I,V> {
 	/**
 	 * @return the viewer this editing support works for
 	 */
-	public ColumnViewer getViewer() {
+	public ColumnViewer<E,I> getViewer() {
 		return viewer;
 	}
 
