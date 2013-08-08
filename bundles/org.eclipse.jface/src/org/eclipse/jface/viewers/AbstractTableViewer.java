@@ -81,7 +81,7 @@ public abstract class AbstractTableViewer<E,I> extends ColumnViewer<E,I> {
 					if (element == null) {
 						// Didn't find it so make a request
 						// Keep looking if it is not in the cache.
-						IContentProvider contentProvider = getContentProvider();
+						IContentProvider<I> contentProvider = getContentProvider();
 						// If we are building lazily then request lookup now
 						if (contentProvider instanceof ILazyContentProvider) {
 							((ILazyContentProvider) contentProvider)
@@ -123,6 +123,7 @@ public abstract class AbstractTableViewer<E,I> extends ColumnViewer<E,I> {
 
 			int requiredCount = doGetItemCount() + 1;
 
+			@SuppressWarnings("unchecked")
 			E[] newCache = (E[]) new Object[requiredCount];
 			System.arraycopy(cachedElements, 0, newCache, 0, index);
 			if (index < cachedElements.length) {
@@ -148,6 +149,7 @@ public abstract class AbstractTableViewer<E,I> extends ColumnViewer<E,I> {
 			int requiredCount = doGetItemCount() - indices.length;
 
 			Arrays.sort(indices);
+			@SuppressWarnings("unchecked")
 			E[] newCache = (E[]) new Object[requiredCount];
 			int indexInNewCache = 0;
 			int nextToSkip = 0;
@@ -170,6 +172,7 @@ public abstract class AbstractTableViewer<E,I> extends ColumnViewer<E,I> {
 		 */
 		public void removeIndicesFromTo(int from, int to) {
 			int indexAfterTo = to + 1;
+			@SuppressWarnings("unchecked")
 			E[] newCache = (E[]) new Object[cachedElements.length
 					- (indexAfterTo - from)];
 			System.arraycopy(cachedElements, 0, newCache, 0, from);
@@ -194,10 +197,12 @@ public abstract class AbstractTableViewer<E,I> extends ColumnViewer<E,I> {
 			if (count == cachedElements.length) {
 				return;
 			} else if (count < cachedElements.length) {
+				@SuppressWarnings("unchecked")
 				E[] newCache = (E[]) new Object[count];
 				System.arraycopy(cachedElements, 0, newCache, 0, count);
 				cachedElements = newCache;
 			} else {
+				@SuppressWarnings("unchecked")
 				E[] newCache = (E[]) new Object[count];
 				System.arraycopy(cachedElements, 0, newCache, 0,
 						cachedElements.length);
@@ -316,7 +321,9 @@ public abstract class AbstractTableViewer<E,I> extends ColumnViewer<E,I> {
 	 *            the element to add
 	 */
 	public void add(E element) {
-		add((E[]) new Object[] { element });
+		@SuppressWarnings("unchecked")
+		E[] newElements = (E[]) new Object[] { element };
+		add(newElements);
 	}
 
 	/*

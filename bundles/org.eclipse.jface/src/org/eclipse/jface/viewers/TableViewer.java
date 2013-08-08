@@ -73,7 +73,7 @@ public class TableViewer<E,I> extends AbstractTableViewer<E,I>  {
 	/**
 	 * The cached row which is reused all over
 	 */
-	private TableViewerRow cachedRow;
+	private TableViewerRow<E> cachedRow;
 
 	/**
 	 * Creates a table viewer on a newly-created table control under the given
@@ -164,9 +164,9 @@ public class TableViewer<E,I> extends AbstractTableViewer<E,I>  {
 	}
 
 	@Override
-	protected ViewerRow getViewerRowFromItem(Widget item) {
+	protected ViewerRow<E> getViewerRowFromItem(Widget item) {
 		if (cachedRow == null) {
-			cachedRow = new TableViewerRow((TableItem) item);
+			cachedRow = new TableViewerRow<E>((TableItem) item);
 		} else {
 			cachedRow.setItem((TableItem) item);
 		}
@@ -183,7 +183,7 @@ public class TableViewer<E,I> extends AbstractTableViewer<E,I>  {
 	 * @since 3.3
 	 */
 	@Override
-	protected ViewerRow internalCreateNewRowPart(int style, int rowIndex) {
+	protected ViewerRow<E> internalCreateNewRowPart(int style, int rowIndex) {
 		TableItem item;
 
 		if (rowIndex >= 0) {
