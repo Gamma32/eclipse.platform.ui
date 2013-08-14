@@ -61,10 +61,12 @@ import org.eclipse.swt.widgets.Widget;
  * interfaces <code>ITreeContentProvider</code> or (as of 3.2, to support
  * multiple equal elements) <code>ITreePathContentProvider</code>.
  * </p>
+ * @param <E> Type of an single element of the model
+ * @param <I> Type of the input
  *
  * @see TreeViewer
  */
-public abstract class AbstractTreeViewer extends ColumnViewer {
+public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 
 	/**
 	 * Constant indicating that all levels of the tree should be expanded or
@@ -89,10 +91,10 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * @see #setAutoExpandLevel
 	 */
 	private int expandToLevel = 0;
-	
+
 	/**
 	 * Indicates if filters should be checked to determine expandability of
-	 * a tree node. 
+	 * a tree node.
 	 */
 	private boolean isExpandableCheckFilters = false;
 
@@ -100,11 +102,11 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * Safe runnable used to update an item.
 	 */
 	class UpdateItemSafeRunnable extends SafeRunnable {
-		private Object element;
+		private E element;
 
 		private Item item;
 
-		UpdateItemSafeRunnable(Item item, Object element) {
+		UpdateItemSafeRunnable(Item item, E element) {
 			this.item = item;
 			this.element = element;
 		}
@@ -168,7 +170,8 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	final protected Widget[] internalFindItems(Object parentElementOrTreePath) {
 		Widget[] widgets;
 		if (parentElementOrTreePath instanceof TreePath) {
-			TreePath path = (TreePath) parentElementOrTreePath;
+			@SuppressWarnings("unchecked")
+			TreePath<E> path = (TreePath<E>) parentElementOrTreePath;
 			Widget w = internalFindItem(path);
 			if (w == null) {
 				widgets = new Widget[] {};
@@ -176,7 +179,9 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 				widgets = new Widget[] { w };
 			}
 		} else {
-			widgets = findItems(parentElementOrTreePath);
+			@SuppressWarnings("unchecked")
+			E element = (E) parentElementOrTreePath;
+			widgets = findItems(element);
 		}
 		return widgets;
 	}
@@ -188,13 +193,13 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 *            the path
 	 * @return {@link Widget} the item at that path
 	 */
-	private Widget internalFindItem(TreePath path) {
+	private Widget internalFindItem(TreePath<E> path) {
 		Widget[] widgets = findItems(path.getLastSegment());
 		for (int i = 0; i < widgets.length; i++) {
 			Widget widget = widgets[i];
 			if (widget instanceof Item) {
 				Item item = (Item) widget;
-				TreePath p = getTreePathFromItem(item);
+				TreePath<E> p = getTreePathFromItem(item);
 				if (p.equals(path)) {
 					return widget;
 				}
@@ -224,9 +229,9 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	protected void internalAdd(Widget widget, Object parentElementOrTreePath,
 			Object[] childElements) {
 		Object parent;
-		TreePath path;
+		TreePath<E> path;
 		if (parentElementOrTreePath instanceof TreePath) {
-			path = (TreePath) parentElementOrTreePath;
+			path = (TreePath<E>) parentElementOrTreePath;
 			parent = path.getLastSegment();
 		} else {
 			parent = parentElementOrTreePath;
@@ -364,10 +369,10 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 		// start position. This is the insertion position relative to the
 		// original item array.
 		int indexInItems = 0;
-		
+
 		// Count of elements we have added. See bug 205700 for why this is needed.
 		int newItems = 0;
-		
+
 		elementloop: for (int i = 0; i < elements.length; i++) {
 			Object element = elements[i];
 			// update the index relative to the original item array
@@ -422,7 +427,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * @param element
 	 * @return <code>true</code> if the element matches.
 	 */
-	private boolean itemExists(Item[] items, Object element) {
+	private boolean itemExists(Item[] items, E element) {
 		if (usingElementMap()) {
 			Widget[] existingItems = findItems(element);
 			// optimization for two common cases
@@ -573,9 +578,9 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * @return the tree path that should be used as the parent path for the
 	 *         given widget and sorter
 	 */
-	private TreePath internalGetSorterParentPath(Widget parent,
+	private TreePath<E> internalGetSorterParentPath(Widget parent,
 			ViewerComparator comparator) {
-		TreePath path;
+		TreePath<E> path;
 		if (comparator instanceof TreePathViewerSorter
 				&& parent instanceof Item) {
 			Item item = (Item) parent;
@@ -603,7 +608,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * @return the result of comparing the two elements
 	 */
 	private int internalCompare(ViewerComparator comparator,
-			TreePath parentPath, Object e1, Object e2) {
+			TreePath<E> parentPath, Object e1, Object e2) {
 		if (comparator instanceof TreePathViewerSorter) {
 			TreePathViewerSorter tpvs = (TreePathViewerSorter) comparator;
 			return tpvs.compare(this, parentPath, e1, e2);
@@ -617,8 +622,8 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * @see org.eclipse.jface.viewers.StructuredViewer#getSortedChildren(java.lang.Object)
 	 */
 	@Override
-	protected Object[] getSortedChildren(Object parentElementOrTreePath) {
-		Object[] result = getFilteredChildren(parentElementOrTreePath);
+	protected E[] getSortedChildren(Object parentElementOrTreePath) {
+		E[] result = getFilteredChildren(parentElementOrTreePath);
 		ViewerComparator comparator = getComparator();
 		if (parentElementOrTreePath != null
 				&& comparator instanceof TreePathViewerSorter) {
@@ -627,9 +632,9 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 			// be sure we're not modifying the original array from the model
 			result = result.clone();
 
-			TreePath path = null;
+			TreePath<E> path = null;
 			if (parentElementOrTreePath instanceof TreePath) {
-				path = (TreePath) parentElementOrTreePath;
+				path = (TreePath<E>) parentElementOrTreePath;
 			} else {
 				Object parent = parentElementOrTreePath;
 				Widget w = internalGetWidgetToSelect(parent);
@@ -664,7 +669,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * @param childElement
 	 *            the child element
 	 */
-	public void add(Object parentElementOrTreePath, Object childElement) {
+	public void add(Object parentElementOrTreePath, E childElement) {
 		add(parentElementOrTreePath, new Object[] { childElement });
 	}
 
@@ -711,8 +716,9 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * @see StructuredViewer#associate(Object, Item)
 	 */
 	@Override
-	protected void associate(Object element, Item item) {
-		Object data = item.getData();
+	protected void associate(E element, Item item) {
+		@SuppressWarnings("unchecked")
+		E data = (E) item.getData();
 		if (data != null && data != element && equals(data, element)) {
 			// workaround for PR 1FV62BT
 			// assumption: elements are equal but not identical
@@ -770,7 +776,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	protected void createChildren(final Widget widget) {
 		createChildren(widget, true);
 	}
-	
+
 	/**
 	 * Creates all children for the given widget.
 	 * <p>
@@ -782,7 +788,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 *
 	 * @param widget
 	 *            the widget
-	 * @param materialize 
+	 * @param materialize
 	 * 			  true if children are expected to be fully materialized
 	 */
 	void createChildren(final Widget widget, boolean materialize) {
@@ -846,7 +852,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 *            if non-negative, indicates the position to insert the item
 	 *            into its parent
 	 */
-	protected void createTreeItem(Widget parent, Object element, int index) {
+	protected void createTreeItem(Widget parent, E element, int index) {
 		Item item = newItem(parent, SWT.NULL, index);
 		updateItem(item, element);
 		updatePlus(item, element);
@@ -900,7 +906,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 
 	/* (non-Javadoc) Method declared on StructuredViewer. */
 	@Override
-	protected Widget doFindItem(Object element) {
+	protected Widget doFindItem(E element) {
 		// compare with root
 		Object root = getRoot();
 		if (root == null) {
@@ -927,7 +933,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * @param element
 	 *            the element
 	 */
-	protected void doUpdateItem(final Item item, Object element) {
+	protected void doUpdateItem(final Item item, E element) {
 		if (item.isDisposed()) {
 			unmapElement(element, item);
 			return;
@@ -937,13 +943,13 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 		if (columnCount == 0)// If no columns are created then fake one
 			columnCount = 1;
 
-		ViewerRow viewerRowFromItem = getViewerRowFromItem(item);
+		ViewerRow<E> viewerRowFromItem = getViewerRowFromItem(item);
 
 		boolean isVirtual = (getControl().getStyle() & SWT.VIRTUAL) != 0;
 
 		// If the control is virtual, we cannot use the cached viewer row object. See bug 188663.
 		if (isVirtual) {
-			viewerRowFromItem = (ViewerRow) viewerRowFromItem.clone();
+			viewerRowFromItem = (ViewerRow<E>) viewerRowFromItem.clone();
 		}
 
 		for (int column = 0; column < columnCount; column++) {
@@ -1395,12 +1401,12 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	/**
 	 * Asserts that the given array of elements is itself non- <code>null</code>
 	 * and contains no <code>null</code> elements.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent element
 	 * @param elements
 	 *            the array to check
-	 * 
+	 *
 	 * @see #assertElementsNotNull(Object[])
 	 */
 	private void assertElementsNotNull(Object parent, Object[] elements) {
@@ -1408,7 +1414,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 		for (int i = 0, n = elements.length; i < n; ++i) {
 			Assert.isNotNull(elements[i]);
 		}
-		
+
 		if (InternalPolicy.DEBUG_LOG_EQUAL_VIEWER_ELEMENTS
 				&& elements.length > 1) {
 			CustomHashtable elementSet = newHashtable(elements.length * 2);
@@ -1426,7 +1432,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 			}
 		}
 	}
-	
+
 	/**
 	 * Returns all selected items for the given SWT control.
 	 *
@@ -1739,7 +1745,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 */
 	protected Widget internalGetWidgetToSelect(Object elementOrTreePath) {
 		if (elementOrTreePath instanceof TreePath) {
-			TreePath treePath = (TreePath) elementOrTreePath;
+			TreePath<E> treePath = (TreePath<E>) elementOrTreePath;
 			if (treePath.getSegmentCount() == 0) {
 				return getControl();
 			}
@@ -2135,7 +2141,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 			element = elementOrTreePath;
 			path = null;
 		}
-		IContentProvider cp = getContentProvider();
+		IContentProvider<I> cp = getContentProvider();
 		if (cp instanceof ITreePathContentProvider) {
 			ITreePathContentProvider tpcp = (ITreePathContentProvider) cp;
 			if (path == null) {
@@ -2380,7 +2386,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * Note that in previous releases, the Javadoc for this method had an off-by
 	 * one error. See bug 177669 for details.
 	 * </p>
-	 * 
+	 *
 	 * @param level
 	 *            non-negative level, or <code>ALL_LEVELS</code> to expand all
 	 *            levels of the tree
@@ -2677,7 +2683,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 		}
 
 		Item[] items = getChildren(widget);
-		
+
 		// save the expanded elements
 		CustomHashtable expanded = newHashtable(CustomHashtable.DEFAULT_CAPACITY); // assume
 																					// num
@@ -2852,12 +2858,12 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	/**
 	 * Not to be called by clients. Return the items to be refreshed as part of
 	 * an update. elementChildren are the new elements.
-	 * 
+	 *
 	 * @param widget
 	 * @param elementChildren
 	 * @since 3.4
 	 * @return Item[]
-	 * 
+	 *
 	 * @deprecated This method was inadvertently released as API but is not
 	 *             intended to be called by clients.
 	 */
@@ -2950,7 +2956,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 *
 	 * @since 3.2
 	 */
-	protected TreePath getTreePathFromItem(Item item) {
+	protected TreePath<E> getTreePathFromItem(Item item) {
 		LinkedList segments = new LinkedList();
 		while (item != null) {
 			Object segment = item.getData();
@@ -3196,7 +3202,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * Subclasses should implement
 	 */
 	@Override
-	protected ViewerRow getViewerRowFromItem(Widget item) {
+	protected ViewerRow<E> getViewerRowFromItem(Widget item) {
 		return null;
 	}
 
@@ -3207,10 +3213,10 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * Setting this value to <code>true</code> will affect performance of the tree
 	 * viewer.
 	 * </p><p>
-	 * To improve performance, by default the tree viewer does not consult filters when 
+	 * To improve performance, by default the tree viewer does not consult filters when
 	 * determining if a tree node could be expanded.
 	 * </p>
-	 * @param checkFilters <code>true</code> to instruct tree viewer to consult filters 
+	 * @param checkFilters <code>true</code> to instruct tree viewer to consult filters
 	 * @see #isExpandable(Object)
 	 * @since 3.8
 	 */
