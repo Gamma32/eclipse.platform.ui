@@ -48,11 +48,14 @@ public class Snippet019TableViewerAddRemoveColumnsWithEditingNewAPI {
 		public String surname;
 
 		public String email;
+		
+		private int age;
 
-		public Person(String givenname, String surname, String email) {
+		public Person(String givenname, String surname, String email, int age) {
 			this.givenname = givenname;
 			this.surname = surname;
 			this.email = email;
+			this.age = age;
 		}
 	}
 
@@ -71,7 +74,11 @@ public class Snippet019TableViewerAddRemoveColumnsWithEditingNewAPI {
 
 	}
 
-	
+	private class AgeLabelProvider extends ColumnLabelProvider {
+		public String getText(Object element) {
+			return Integer.toString(((Person) element).age);
+		}
+	}
 
 	private class GivenNameLabelProvider extends ColumnLabelProvider {
 		public String getText(Object element) {
@@ -191,6 +198,12 @@ public class Snippet019TableViewerAddRemoveColumnsWithEditingNewAPI {
 		column.getColumn().setWidth(200);
 		column.getColumn().setText("Surname");
 		column.getColumn().setMoveable(true);
+		
+		column = new TableViewerColumn(v, SWT.NONE);
+		column.setLabelProvider(new AgeLabelProvider());
+		column.getColumn().setWidth(80);
+		column.getColumn().setText("Age");
+		column.getColumn().setMoveable(true);
 
 		Person[] model = createModel();
 
@@ -269,7 +282,7 @@ public class Snippet019TableViewerAddRemoveColumnsWithEditingNewAPI {
 		mgr.addMenuListener(new IMenuListener() {
 
 			public void menuAboutToShow(IMenuManager manager) {
-				if (v.getTable().getColumnCount() == 2) {
+				if (v.getTable().getColumnCount() == 3) {
 					manager.add(insertEmailBefore);
 					manager.add(insertEmailAfter);
 				} else {
@@ -285,10 +298,11 @@ public class Snippet019TableViewerAddRemoveColumnsWithEditingNewAPI {
 
 	private Person[] createModel() {
 		Person[] persons = new Person[3];
-		persons[0] = new Person("Tom", "Schindl", "tom.schindl@bestsolution.at");
+		persons[0] = new Person("Tom", "Schindl",
+				"tom.schindl@bestsolution.at", 28);
 		persons[1] = new Person("Boris", "Bokowski",
-				"boris_bokowski@ca.ibm.com");
-		persons[2] = new Person("Tod", "Creasey", "tod_creasey@ca.ibm.com");
+				"boris_bokowski@ca.ibm.com", 31);
+		persons[2] = new Person("Tod", "Creasey", "tod_creasey@ca.ibm.com", 35);
 
 		return persons;
 	}
