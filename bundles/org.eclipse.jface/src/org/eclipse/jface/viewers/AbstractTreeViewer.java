@@ -142,7 +142,7 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 	 * @param childElements
 	 *            the child elements to add
 	 */
-	public void add(Object parentElementOrTreePath, Object[] childElements) {
+	public void add(Object parentElementOrTreePath, E[] childElements) {
 		Assert.isNotNull(parentElementOrTreePath);
 		assertElementsNotNull(childElements);
 		if (checkBusy())
@@ -227,14 +227,14 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 	 * @since 3.1
 	 */
 	protected void internalAdd(Widget widget, Object parentElementOrTreePath,
-			Object[] childElements) {
-		Object parent;
+			E[] childElements) {
+		E parent;
 		TreePath<E> path;
 		if (parentElementOrTreePath instanceof TreePath) {
 			path = (TreePath<E>) parentElementOrTreePath;
 			parent = path.getLastSegment();
 		} else {
-			parent = parentElementOrTreePath;
+			parent = (E) parentElementOrTreePath;
 			path = null;
 		}
 
@@ -269,7 +269,7 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 
 		if (childElements.length > 0) {
 			// TODO: Add filtering back?
-			Object[] filtered = filter(parentElementOrTreePath, childElements);
+			E[] filtered = filter(parentElementOrTreePath, childElements);
 			ViewerComparator comparator = getComparator();
 			if (comparator != null) {
 				if (comparator instanceof TreePathViewerSorter) {
@@ -303,10 +303,10 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 	 *            the child elements
 	 * @return the filter list of children
 	 */
-	private Object[] filter(Object parentElementOrTreePath, Object[] elements) {
+	private E[] filter(Object parentElementOrTreePath, E[] elements) {
 		ViewerFilter[] filters = getFilters();
 		if (filters != null) {
-			ArrayList filtered = new ArrayList(elements.length);
+			ArrayList<E> filtered = new ArrayList<E>(elements.length);
 			for (int i = 0; i < elements.length; i++) {
 				boolean add = true;
 				for (int j = 0; j < filters.length; j++) {
@@ -320,7 +320,7 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 					filtered.add(elements[i]);
 				}
 			}
-			return filtered.toArray();
+			return (E[]) filtered.toArray();
 		}
 		return elements;
 	}
@@ -333,7 +333,7 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 	 * @param elements
 	 *            Sorted list of elements to add.
 	 */
-	private void createAddedElements(Widget widget, Object[] elements) {
+	private void createAddedElements(Widget widget, E[] elements) {
 
 		if (elements.length == 1) {
 			if (equals(elements[0], widget.getData())) {
@@ -342,7 +342,7 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 		}
 
 		ViewerComparator comparator = getComparator();
-		TreePath parentPath = internalGetSorterParentPath(widget, comparator);
+		TreePath<E> parentPath = internalGetSorterParentPath(widget, comparator);
 		Item[] items = getChildren(widget);
 
 		// Optimize for the empty case
@@ -356,7 +356,7 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 		// Optimize for no comparator
 		if (comparator == null) {
 			for (int i = 0; i < elements.length; i++) {
-				Object element = elements[i];
+				E element = elements[i];
 				if (itemExists(items, element)) {
 					internalRefresh(element);
 				} else {
@@ -374,7 +374,7 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 		int newItems = 0;
 
 		elementloop: for (int i = 0; i < elements.length; i++) {
-			Object element = elements[i];
+			E element = elements[i];
 			// update the index relative to the original item array
 			indexInItems = insertionPosition(items, comparator,
 					indexInItems, element, parentPath);
@@ -472,7 +472,7 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 	 */
 
 	private int insertionPosition(Item[] items, ViewerComparator comparator,
-			int lastInsertion, Object element, TreePath parentPath) {
+			int lastInsertion, E element, TreePath<E> parentPath) {
 
 		int size = items.length;
 		if (comparator == null) {
@@ -527,9 +527,9 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 	 *            The element to insert.
 	 * @return the index of the element
 	 */
-	protected int indexForElement(Widget parent, Object element) {
+	protected int indexForElement(Widget parent, E element) {
 		ViewerComparator comparator = getComparator();
-		TreePath parentPath = internalGetSorterParentPath(parent, comparator);
+		TreePath<E> parentPath = internalGetSorterParentPath(parent, comparator);
 
 		Item[] items = getChildren(parent);
 		int count = items.length;
@@ -623,7 +623,7 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 	 */
 	@Override
 	protected E[] getSortedChildren(Object parentElementOrTreePath) {
-		E[] result = getFilteredChildren(parentElementOrTreePath);
+		E[] result = getFilteredChildren((I)parentElementOrTreePath);
 		ViewerComparator comparator = getComparator();
 		if (parentElementOrTreePath != null
 				&& comparator instanceof TreePathViewerSorter) {
@@ -670,7 +670,7 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 	 *            the child element
 	 */
 	public void add(Object parentElementOrTreePath, E childElement) {
-		add(parentElementOrTreePath, new Object[] { childElement });
+		add(parentElementOrTreePath, (E[]) new Object[] { childElement });
 	}
 
 	/**
@@ -818,12 +818,12 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 							tis[i].dispose();
 						}
 					}
-					Object d = widget.getData();
+					E d = (E) widget.getData();
 					if (d != null) {
-						Object parentElement = d;
-						Object[] children;
+						E parentElement = d;
+						E[] children;
 						if (isTreePathContentProvider() && widget instanceof Item) {
-							TreePath path = getTreePathFromItem((Item) widget);
+							TreePath<E> path = getTreePathFromItem((Item) widget);
 							children = getSortedChildren(path);
 						} else {
 							children = getSortedChildren(parentElement);
@@ -953,13 +953,13 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 		}
 
 		for (int column = 0; column < columnCount; column++) {
-			ViewerColumn columnViewer = getViewerColumn(column);
-			ViewerCell cellToUpdate = updateCell(viewerRowFromItem, column,
+			ViewerColumn<E,I> columnViewer = getViewerColumn(column);
+			ViewerCell<E> cellToUpdate = updateCell(viewerRowFromItem, column,
 					element);
 
 			// If the control is virtual, we cannot use the cached cell object. See bug 188663.
 			if (isVirtual) {
-				cellToUpdate = new ViewerCell(cellToUpdate.getViewerRow(), cellToUpdate.getColumnIndex(), element);
+				cellToUpdate = new ViewerCell<E>(cellToUpdate.getViewerRow(), cellToUpdate.getColumnIndex(), element);
 			}
 
 			columnViewer.refresh(cellToUpdate);
@@ -993,17 +993,17 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 	 *
 	 * @since 3.1 in TreeViewer, moved to AbstractTreeViewer in 3.3
 	 */
-	protected boolean isSameSelection(List items, Item[] current) {
+	protected boolean isSameSelection(List<E> items, Item[] current) {
 		// If they are not the same size then they are not equivalent
 		int n = items.size();
 		if (n != current.length) {
 			return false;
 		}
 
-		CustomHashtable itemSet = newHashtable(n * 2 + 1);
-		for (Iterator i = items.iterator(); i.hasNext();) {
+		CustomHashtable<E,E> itemSet = newHashtable(n * 2 + 1);
+		for (Iterator<E> i = items.iterator(); i.hasNext();) {
 			Item item = (Item) i.next();
-			Object element = item.getData();
+			E element = (E) item.getData();
 			itemSet.put(element, element);
 		}
 
@@ -1011,7 +1011,7 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 		// If there is a mismatch return false
 		for (int i = 0; i < current.length; i++) {
 			if (current[i].getData() == null
-					|| !itemSet.containsKey(current[i].getData())) {
+					|| !itemSet.containsKey((E) current[i].getData())) {
 				return false;
 			}
 		}
@@ -1023,7 +1023,7 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 
 	/* (non-Javadoc) Method declared on StructuredViewer. */
 	@Override
-	protected void doUpdateItem(Widget widget, Object element, boolean fullMap) {
+	protected void doUpdateItem(Widget widget, E element, boolean fullMap) {
 		boolean oldBusy = isBusy();
 		setBusy(true);
 		try {
@@ -1034,7 +1034,7 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 				if (fullMap) {
 					associate(element, item);
 				} else {
-					Object data = item.getData();
+					E data = (E) item.getData();
 					if (data != null) {
 						unmapElement(data, item);
 					}
@@ -1204,12 +1204,12 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 	 * @see #setExpandedElements
 	 */
 	public Object[] getExpandedElements() {
-		ArrayList items = new ArrayList();
+		ArrayList<Item> items = new ArrayList<Item>();
 		internalCollectExpandedItems(items, getControl());
-		ArrayList result = new ArrayList(items.size());
-		for (Iterator it = items.iterator(); it.hasNext();) {
-			Item item = (Item) it.next();
-			Object data = item.getData();
+		ArrayList<E> result = new ArrayList<E>(items.size());
+		for (Iterator<Item> it = items.iterator(); it.hasNext();) {
+			Item item = it.next();
+			E data = (E) item.getData();
 			if (data != null) {
 				result.add(data);
 			}
@@ -1347,17 +1347,17 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 
 	/* (non-Javadoc) Method declared on StructuredViewer. */
 	@Override
-	protected Object[] getRawChildren(Object parentElementOrTreePath) {
+	protected E[] getRawChildren(Object parentElementOrTreePath) {
 		boolean oldBusy = isBusy();
 		setBusy(true);
 		try {
-			Object parent;
-			TreePath path;
+			E parent;
+			TreePath<E> path;
 			if (parentElementOrTreePath instanceof TreePath) {
-				path = (TreePath) parentElementOrTreePath;
+				path = (TreePath<E>) parentElementOrTreePath;
 				parent = path.getLastSegment();
 			} else {
-				parent = parentElementOrTreePath;
+				parent = (E) parentElementOrTreePath;
 				path = null;
 			}
 			if (parent != null) {
