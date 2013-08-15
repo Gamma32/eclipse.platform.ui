@@ -285,9 +285,9 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 			createAddedElements(widget, filtered);
 			if (InternalPolicy.DEBUG_LOG_EQUAL_VIEWER_ELEMENTS) {
 				Item[] children = getChildren(widget);
-				Object[] elements = new Object[children.length];
+				E[] elements = (E[]) new Object[children.length];
 				for (int i = 0; i < children.length; i++) {
-					elements[i] = children[i].getData();
+					elements[i] = (E) children[i].getData();
 				}
 				assertElementsNotNull(parent, elements);
 			}
@@ -1362,11 +1362,11 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 			}
 			if (parent != null) {
 				if (equals(parent, getRoot())) {
-					return super.getRawChildren(parent);
+					return super.getRawChildren((I)parent);
 				}
-				IContentProvider cp = getContentProvider();
+				IContentProvider<I> cp = getContentProvider();
 				if (cp instanceof ITreePathContentProvider) {
-					ITreePathContentProvider tpcp = (ITreePathContentProvider) cp;
+					ITreePathContentProvider<E,I> tpcp = (ITreePathContentProvider<E,I>) cp;
 					if (path == null) {
 						// A path was not provided so try and find one
 						Widget w = findItem(parent);
@@ -1375,24 +1375,24 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 							path = getTreePathFromItem(item);
 						}
 						if (path == null) {
-							path = new TreePath(new Object[] { parent });
+							path = new TreePath<E>((E[]) new Object[] { parent });
 						}
 					}
-					Object[] result = tpcp.getChildren(path);
+					E[] result = tpcp.getChildren(path);
 					if (result != null) {
 						assertElementsNotNull(parent, result);
 						return result;
 					}
 				} else if (cp instanceof ITreeContentProvider) {
-					ITreeContentProvider tcp = (ITreeContentProvider) cp;
-					Object[] result = tcp.getChildren(parent);
+					ITreeContentProvider<E,I> tcp = (ITreeContentProvider<E,I>) cp;
+					E[] result = tcp.getChildren(parent);
 					if (result != null) {
 						assertElementsNotNull(parent, result);
 						return result;
 					}
 				}
 			}
-			return new Object[0];
+			return (E[]) new Object[0];
 		} finally {
 			setBusy(oldBusy);
 		}
@@ -1409,7 +1409,7 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 	 *
 	 * @see #assertElementsNotNull(Object[])
 	 */
-	private void assertElementsNotNull(Object parent, Object[] elements) {
+	private void assertElementsNotNull(E parent, E[] elements) {
 		Assert.isNotNull(elements);
 		for (int i = 0, n = elements.length; i < n; ++i) {
 			Assert.isNotNull(elements[i]);
@@ -1417,10 +1417,10 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 
 		if (InternalPolicy.DEBUG_LOG_EQUAL_VIEWER_ELEMENTS
 				&& elements.length > 1) {
-			CustomHashtable elementSet = newHashtable(elements.length * 2);
+			CustomHashtable<E,E> elementSet = newHashtable(elements.length * 2);
 			for (int i = 0; i < elements.length; i++) {
-				Object element = elements[i];
-				Object old = elementSet.put(element, element);
+				E element = elements[i];
+				E old = elementSet.put(element, element);
 				if (old != null) {
 					String message = "Sibling elements in viewer must not be equal:\n  " //$NON-NLS-1$
 							+ old + ",\n  " + element + ",\n  parent: " + parent; //$NON-NLS-1$ //$NON-NLS-2$
@@ -1448,12 +1448,12 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 	 * @see org.eclipse.jface.viewers.StructuredViewer#getSelectionFromWidget()
 	 */
 	@Override
-	protected List getSelectionFromWidget() {
+	protected List<E> getSelectionFromWidget() {
 		Widget[] items = getSelection(getControl());
-		ArrayList list = new ArrayList(items.length);
+		ArrayList<E> list = new ArrayList<E>(items.length);
 		for (int i = 0; i < items.length; i++) {
 			Widget item = items[i];
-			Object e = item.getData();
+			E e = (E) item.getData();
 			if (e != null) {
 				list.add(e);
 			}
@@ -1482,7 +1482,7 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 			if (event.item != null && event.item.getData() != null) {
 
 				// changes to fix bug 108102 follow
-				TreePath treePath = getTreePathFromItem((Item) event.item);
+				TreePath<E> treePath = getTreePathFromItem((Item) event.item);
 				selection = new TreeSelection(treePath);
 				// end of changes
 
@@ -1762,7 +1762,7 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 			}
 			return null;
 		}
-		return findItem(elementOrTreePath);
+		return findItem((E)elementOrTreePath);
 	}
 
 	/**
@@ -1868,7 +1868,7 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 			internalRefresh(getControl(), getRoot(), true, updateLabels);
 			return;
 		}
-		Widget[] items = findItems(element);
+		Widget[] items = findItems((E) element);
 		if (items.length != 0) {
 			for (int i = 0; i < items.length; i++) {
 				// pick up structure changes too
@@ -1908,9 +1908,9 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 				updatePlus((Item) widget, element);
 			}
 			if (updateLabels || !equals(element, widget.getData())) {
-				doUpdateItem(widget, element, true);
+				doUpdateItem(widget, (E) element, true);
 			} else {
-				associate(element, (Item) widget);
+				associate((E) element, (Item) widget);
 			}
 		}
 
@@ -1988,7 +1988,7 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 				Object parent = getParentElement(element);
 				if (parent != null
 						&& !equals(parent, getRoot())
-						&& !(parent instanceof TreePath && ((TreePath) parent)
+						&& !(parent instanceof TreePath && ((TreePath<E>) parent)
 								.getSegmentCount() == 0)) {
 					Widget[] parentItems = internalFindItems(parent);
 					for (int j = 0; j < parentItems.length; j++) {
@@ -2013,13 +2013,13 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 	 */
 	protected void internalRemove(Object parent, Object[] elements) {
 
-		CustomHashtable toRemove = new CustomHashtable(getComparer());
+		CustomHashtable<E,E> toRemove = new CustomHashtable<E,E>(getComparer());
 		for (int i = 0; i < elements.length; i++) {
-			toRemove.put(elements[i], elements[i]);
+			toRemove.put((E)elements[i], (E)elements[i]);
 		}
 
 		// Find each place the parent appears in the tree
-		Widget[] parentItemArray = findItems(parent);
+		Widget[] parentItemArray = findItems((E)parent);
 		for (int i = 0; i < parentItemArray.length; i++) {
 			Widget parentItem = parentItemArray[i];
 
@@ -2039,7 +2039,7 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 				for (int j = 0; j < children.length; j++) {
 					Item child = children[j];
 
-					Object data = child.getData();
+					E data = (E) child.getData();
 					if (data != null && toRemove.containsKey(data)) {
 						disassociate(child);
 						child.dispose();
@@ -2093,13 +2093,13 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 	 *            the widget
 	 */
 	private void internalSetExpandedTreePaths(
-			CustomHashtable expandedTreePaths, Widget widget,
-			TreePath currentPath) {
+			CustomHashtable<TreePath<E>,TreePath<E>> expandedTreePaths, Widget widget,
+			TreePath<E> currentPath) {
 		Item[] items = getChildren(widget);
 		for (int i = 0; i < items.length; i++) {
 			Item item = items[i];
-			Object data = item.getData();
-			TreePath childPath = data == null ? null : currentPath
+			E data = (E) item.getData();
+			TreePath<E> childPath = data == null ? null : currentPath
 					.createChildPath(data);
 			if (data != null && childPath != null) {
 				// remove the element to avoid an infinite loop
@@ -2132,27 +2132,27 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 	 *         element can be expanded, or <code>false</code> if not
 	 */
 	public boolean isExpandable(Object elementOrTreePath) {
-		Object element;
-		TreePath path;
+		E element;
+		TreePath<E> path;
 		if (elementOrTreePath instanceof TreePath) {
-			path = (TreePath) elementOrTreePath;
+			path = (TreePath<E>) elementOrTreePath;
 			element = path.getLastSegment();
 		} else {
-			element = elementOrTreePath;
+			element = (E) elementOrTreePath;
 			path = null;
 		}
 		IContentProvider<I> cp = getContentProvider();
 		if (cp instanceof ITreePathContentProvider) {
-			ITreePathContentProvider tpcp = (ITreePathContentProvider) cp;
+			ITreePathContentProvider<E,I> tpcp = (ITreePathContentProvider<E,I>) cp;
 			if (path == null) {
 				// A path was not provided so try and find one
-				Widget w = findItem(element);
+				Widget w = findItem((E) element);
 				if (w instanceof Item) {
 					Item item = (Item) w;
 					path = getTreePathFromItem(item);
 				}
 				if (path == null) {
-					path = new TreePath(new Object[] { element });
+					path = new TreePath<E>((E[]) new Object[] { element });
 				}
 			}
 			boolean hasChildren = tpcp.hasChildren(path);
@@ -2162,7 +2162,7 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 			return hasChildren;
 		}
 		if (cp instanceof ITreeContentProvider) {
-			ITreeContentProvider tcp = (ITreeContentProvider) cp;
+			ITreeContentProvider<E,I> tcp = (ITreeContentProvider<E,I>) cp;
 			boolean hasChildren = tcp.hasChildren(element);
 			if (hasChildren && isExpandableCheckFilters && hasFilters()) {
 				return getFilteredChildren(element).length > 0;
@@ -2401,13 +2401,13 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 	 * <code>ITreeContentProvider</code>.
 	 */
 	@Override
-	public void setContentProvider(IContentProvider provider) {
+	public void setContentProvider(IContentProvider<I> provider) {
 		// the actual check is in assertContentProviderType
 		super.setContentProvider(provider);
 	}
 
 	@Override
-	protected void assertContentProviderType(IContentProvider provider) {
+	protected void assertContentProviderType(IContentProvider<I> provider) {
 		Assert.isTrue(provider instanceof ITreeContentProvider
 				|| provider instanceof ITreePathContentProvider);
 	}
@@ -2435,14 +2435,14 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 	 *            the array of expanded elements
 	 * @see #getExpandedElements
 	 */
-	public void setExpandedElements(Object[] elements) {
+	public void setExpandedElements(E[] elements) {
 		assertElementsNotNull(elements);
 		if (checkBusy()) {
 			return;
 		}
-		CustomHashtable expandedElements = newHashtable(elements.length * 2 + 1);
+		CustomHashtable<E,E> expandedElements = newHashtable(elements.length * 2 + 1);
 		for (int i = 0; i < elements.length; ++i) {
-			Object element = elements[i];
+			E element = elements[i];
 			// Ensure item exists for element. This will materialize items for
 			// each element and their parents, if possible. This is important
 			// to support expanding of inner tree nodes without necessarily
@@ -2472,7 +2472,7 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 	 *
 	 * @since 3.2
 	 */
-	public void setExpandedTreePaths(TreePath[] treePaths) {
+	public void setExpandedTreePaths(TreePath<E>[] treePaths) {
 		assertElementsNotNull(treePaths);
 		if (checkBusy())
 			return;
@@ -2480,17 +2480,17 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 		IElementComparer treePathComparer = new IElementComparer() {
 
 			public boolean equals(Object a, Object b) {
-				return ((TreePath) a).equals(((TreePath) b), comparer);
+				return ((TreePath<E>) a).equals(((TreePath<E>) b), comparer);
 			}
 
 			public int hashCode(Object element) {
-				return ((TreePath) element).hashCode(comparer);
+				return ((TreePath<E>) element).hashCode(comparer);
 			}
 		};
-		CustomHashtable expandedTreePaths = new CustomHashtable(
+		CustomHashtable<TreePath<E>,TreePath<E>> expandedTreePaths = new CustomHashtable<TreePath<E>,TreePath<E>>(
 				treePaths.length * 2 + 1, treePathComparer);
 		for (int i = 0; i < treePaths.length; ++i) {
-			TreePath treePath = treePaths[i];
+			TreePath<E> treePath = treePaths[i];
 			// Ensure item exists for element. This will materialize items for
 			// each element and their parents, if possible. This is important
 			// to support expanding of inner tree nodes without necessarily
@@ -2503,7 +2503,7 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 		// equal elements, and those are in the set of elements to be expanded,
 		// only the first item found for each element will be expanded.
 		internalSetExpandedTreePaths(expandedTreePaths, getControl(),
-				new TreePath(new Object[0]));
+				new TreePath<E>((E[]) new Object[0]));
 	}
 
 	/**
@@ -2536,7 +2536,7 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 	 *            list of items (element type:
 	 *            <code>org.eclipse.swt.widgets.Item</code>)
 	 */
-	protected abstract void setSelection(List items);
+	protected abstract void setSelection(List<Item> items);
 
 	/**
 	 * This implementation of setSelectionToWidget accepts a list of elements or
@@ -2667,7 +2667,7 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 		// below.
 		if (elementChildren == null) {
 			if (isTreePathContentProvider() && widget instanceof Item) {
-				TreePath path = getTreePathFromItem((Item) widget);
+				TreePath<E> path = getTreePathFromItem((Item) widget);
 				elementChildren = getSortedChildren(path);
 			} else {
 				elementChildren = getSortedChildren(parent);
@@ -2751,10 +2751,10 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 						// or children
 						Object data = item.getData();
 						if (data != null) {
-							unmapElement(data, item);
+							unmapElement((E) data, item);
 						}
 						item.setData(newElement);
-						mapElement(newElement, item);
+						mapElement((E) newElement, item);
 					} else {
 						disassociate(item);
 						// Clear the text and image to force a label update
