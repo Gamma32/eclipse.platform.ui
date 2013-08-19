@@ -924,6 +924,19 @@ public abstract class StructuredViewer<E,I> extends ContentViewer<E,I> implement
 	 */
 	protected E[] getFilteredChildren(I parent) {
 		E[] result = getRawChildren(parent);
+		return internalFilter(result, parent);
+	}
+
+	/**
+	 * @param elements
+	 * 			elements to be filtered
+	 * @param parent
+	 * 			the parent element
+	 * @return a filtered array of child elements
+	 * @since 3.10
+	 */
+	protected E[] internalFilter(E[] elements, Object parent){
+		E[] result = elements;
 		if (filters != null) {
 			for (Iterator<ViewerFilter> iter = filters.iterator(); iter.hasNext();) {
 				ViewerFilter f = iter.next();
