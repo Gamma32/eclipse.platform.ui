@@ -667,7 +667,7 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 	 *            the child element
 	 */
 	public void add(Object parentElementOrTreePath, Object childElement) {
-		add(parentElementOrTreePath, new Object[] { childElement });
+		add(parentElementOrTreePath, (E[])new Object[] { childElement });
 	}
 
 	/**
