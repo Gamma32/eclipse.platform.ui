@@ -23,26 +23,26 @@ import org.eclipse.swt.widgets.Shell;
 /**
  * A simple TableViewer to demonstrate the usage of a standard content provider
  * with a virtual table
- * 
+ *
  * @author Tom Schindl <tom.schindl@bestsolution.at>
- * 
+ *
  */
 public class Snippet029VirtualTableViewer {
-	private class MyContentProvider implements IStructuredContentProvider {
+	private class MyContentProvider implements IStructuredContentProvider<MyModel,MyModel[]> {
 		private MyModel[] elements;
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
-		public Object[] getElements(Object inputElement) {
+		public MyModel[] getElements(MyModel[] inputElement) {
 			return elements;
 		}
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 		 */
 		public void dispose() {
@@ -51,12 +51,12 @@ public class Snippet029VirtualTableViewer {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
 		 *      java.lang.Object, java.lang.Object)
 		 */
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-			this.elements = (MyModel[]) newInput;
+		public void inputChanged(Viewer<MyModel[]> viewer, MyModel[] oldInput, MyModel[] newInput) {
+			this.elements = newInput;
 		}
 	}
 
@@ -73,8 +73,8 @@ public class Snippet029VirtualTableViewer {
 	}
 
 	public Snippet029VirtualTableViewer(Shell shell) {
-		final TableViewer v = new TableViewer(shell, SWT.VIRTUAL);
-		v.setLabelProvider(new LabelProvider());
+		final TableViewer<MyModel,MyModel[]> v = new TableViewer<MyModel,MyModel[]>(shell, SWT.VIRTUAL);
+		v.setLabelProvider(new LabelProvider<MyModel>());
 		v.setContentProvider(new MyContentProvider());
 		v.setUseHashlookup(true);
 		MyModel[] model = createModel();
