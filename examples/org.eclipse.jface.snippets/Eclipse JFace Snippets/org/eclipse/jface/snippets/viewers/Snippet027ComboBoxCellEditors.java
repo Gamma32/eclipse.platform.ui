@@ -29,22 +29,22 @@ import org.eclipse.swt.widgets.TableItem;
 
 /**
  * This snippet represents usage of the ComboBoxCell-Editor
- * 
+ *
  * @author Tom Schindl <tom.schindl@bestsolution.at>
- * 
+ *
  */
 public class Snippet027ComboBoxCellEditors {
 	private class MyCellModifier implements ICellModifier {
 
-		private TableViewer viewer;
+		private TableViewer<MyModel,MyModel[]> viewer;
 
-		public MyCellModifier(TableViewer viewer) {
+		public MyCellModifier(TableViewer<MyModel,MyModel[]> viewer) {
 			this.viewer = viewer;
 		}
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.jface.viewers.ICellModifier#canModify(java.lang.Object,
 		 *      java.lang.String)
 		 */
@@ -54,7 +54,7 @@ public class Snippet027ComboBoxCellEditors {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.jface.viewers.ICellModifier#getValue(java.lang.Object,
 		 *      java.lang.String)
 		 */
@@ -65,7 +65,7 @@ public class Snippet027ComboBoxCellEditors {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.jface.viewers.ICellModifier#modify(java.lang.Object,
 		 *      java.lang.String, java.lang.Object)
 		 */
@@ -73,24 +73,24 @@ public class Snippet027ComboBoxCellEditors {
 			TableItem item = (TableItem) element;
 			// We get the index and need to calculate the real value
 			((MyModel) item.getData()).counter = ((Integer) value).intValue() * 10;
-			viewer.update(item.getData(), null);
+			viewer.update((MyModel)item.getData(), null);
 		}
 	}
 
-	private class MyContentProvider implements IStructuredContentProvider {
+	private class MyContentProvider implements IStructuredContentProvider<MyModel,MyModel[]> {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
-		public Object[] getElements(Object inputElement) {
+		public MyModel[] getElements(MyModel[] inputElement) {
 			return (MyModel[]) inputElement;
 		}
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 		 */
 		public void dispose() {
@@ -99,11 +99,11 @@ public class Snippet027ComboBoxCellEditors {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
 		 *      java.lang.Object, java.lang.Object)
 		 */
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		public void inputChanged(Viewer<MyModel[]> viewer, MyModel[] oldInput, MyModel[] newInput) {
 
 		}
 
@@ -123,13 +123,13 @@ public class Snippet027ComboBoxCellEditors {
 
 	public Snippet027ComboBoxCellEditors(Shell shell) {
 		final Table table = new Table(shell, SWT.BORDER | SWT.FULL_SELECTION);
-		final TableViewer v = new TableViewer(table);
+		final TableViewer<MyModel,MyModel[]> v = new TableViewer<MyModel,MyModel[]>(table);
 		final MyCellModifier modifier = new MyCellModifier(v);
 
 		TableColumn column = new TableColumn(table, SWT.NONE);
 		column.setWidth(200);
 
-		v.setLabelProvider(new LabelProvider());
+		v.setLabelProvider(new LabelProvider<MyModel>());
 		v.setContentProvider(new MyContentProvider());
 		v.setCellModifier(modifier);
 		v.setColumnProperties(new String[] { "column1" });
