@@ -26,22 +26,22 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * Example usage of ITableLabelProvider using images and labels
- * 
+ *
  * @author Tom Schindl <tom.schindl@bestsolution.at>
- * 
+ *
  */
 public class Snippet024TableViewerExploreNewAPI {
 
-	private class MyContentProvider implements IStructuredContentProvider {
+	private class MyContentProvider implements IStructuredContentProvider<Person,Person[]> {
 
-		public Object[] getElements(Object inputElement) {
-			return (Person[]) inputElement;
+		public Person[] getElements(Person[] inputElement) {
+			return inputElement;
 		}
 
 		public void dispose() {
 		}
 
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		public void inputChanged(Viewer<Person[]> viewer, Person[] oldInput, Person[] newInput) {
 		}
 
 	}
@@ -84,17 +84,17 @@ public class Snippet024TableViewerExploreNewAPI {
 	}
 
 	public Snippet024TableViewerExploreNewAPI(Shell shell) {
-		TableViewer v = new TableViewer(shell, SWT.BORDER | SWT.FULL_SELECTION);
+		TableViewer<Person,Person[]> v = new TableViewer<Person,Person[]>(shell, SWT.BORDER | SWT.FULL_SELECTION);
 		v.setContentProvider(new MyContentProvider());
 
-		TableViewerColumn column = new TableViewerColumn(v, SWT.NONE);
+		TableViewerColumn<Person,Person[]> column = new TableViewerColumn<Person,Person[]>(v, SWT.NONE);
 		column.getColumn().setWidth(200);
 		column.getColumn().setText("Givenname");
 		column.getColumn().setMoveable(true);
-		column.setLabelProvider(new ColumnLabelProvider() {
+		column.setLabelProvider(new ColumnLabelProvider<Person,Person[]>() {
 
-			public String getText(Object element) {
-				return ((Person) element).givenname;
+			public String getText(Person element) {
+				return element.givenname;
 			}
 		});
 
@@ -110,14 +110,14 @@ public class Snippet024TableViewerExploreNewAPI {
 
 		});
 
-		column = new TableViewerColumn(v, SWT.NONE);
+		column = new TableViewerColumn<Person,Person[]>(v, SWT.NONE);
 		column.getColumn().setWidth(200);
 		column.getColumn().setText("Surname");
 		column.getColumn().setMoveable(true);
-		column.setLabelProvider(new ColumnLabelProvider() {
+		column.setLabelProvider(new ColumnLabelProvider<Person,Person[]>() {
 
-			public String getText(Object element) {
-				return ((Person) element).surname;
+			public String getText(Person element) {
+				return element.surname;
 			}
 
 		});
@@ -134,14 +134,14 @@ public class Snippet024TableViewerExploreNewAPI {
 
 		});
 
-		column = new TableViewerColumn(v, SWT.NONE);
+		column = new TableViewerColumn<Person,Person[]>(v, SWT.NONE);
 		column.getColumn().setWidth(200);
 		column.getColumn().setText("E-Mail");
 		column.getColumn().setMoveable(true);
-		column.setLabelProvider(new ColumnLabelProvider() {
+		column.setLabelProvider(new ColumnLabelProvider<Person,Person[]>() {
 
-			public String getText(Object element) {
-				return ((Person) element).email;
+			public String getText(Person element) {
+				return element.email;
 			}
 
 		});
