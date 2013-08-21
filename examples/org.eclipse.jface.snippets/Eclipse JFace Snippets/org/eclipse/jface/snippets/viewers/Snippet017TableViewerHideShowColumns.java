@@ -30,7 +30,7 @@ import org.eclipse.swt.widgets.TableColumn;
 /**
  * Example usage of none mandatory interfaces of ITableFontProvider and
  * ITableColorProvider
- * 
+ *
  * @author Tom Schindl <tom.schindl@bestsolution.at>
  * @since 3.2
  */
@@ -38,13 +38,13 @@ public class Snippet017TableViewerHideShowColumns {
 	private class ShrinkThread extends Thread {
 		private int width = 0;
 		private TableColumn column;
-		
+
 		public ShrinkThread(int width, TableColumn column) {
 			super();
 			this.width = width;
 			this.column = column;
 		}
-		
+
 		public void run() {
 			column.getDisplay().syncExec(new Runnable() {
 
@@ -52,7 +52,7 @@ public class Snippet017TableViewerHideShowColumns {
 					column.setData("restoredWidth", new Integer(width));
 				}
 			});
-			
+
 			for( int i = width; i >= 0; i-- ) {
 				final int index = i;
 				column.getDisplay().syncExec(new Runnable() {
@@ -60,22 +60,22 @@ public class Snippet017TableViewerHideShowColumns {
 					public void run() {
 						column.setWidth(index);
 					}
-					
+
 				});
 			}
 		}
 	};
-	
+
 	private class ExpandThread extends Thread {
 		private int width = 0;
 		private TableColumn column;
-		
+
 		public ExpandThread(int width, TableColumn column) {
 			super();
 			this.width = width;
 			this.column = column;
 		}
-		
+
 		public void run() {
 			for( int i = 0; i <= width; i++ ) {
 				final int index = i;
@@ -84,26 +84,26 @@ public class Snippet017TableViewerHideShowColumns {
 					public void run() {
 						column.setWidth(index);
 					}
-					
+
 				});
 			}
 		}
 	}
-	
-	private class MyContentProvider implements IStructuredContentProvider {
+
+	private class MyContentProvider implements IStructuredContentProvider<MyModel,MyModel[]> {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
-		public Object[] getElements(Object inputElement) {
-			return (MyModel[]) inputElement;
+		public MyModel[] getElements(MyModel[] inputElement) {
+			return inputElement;
 		}
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 		 */
 		public void dispose() {
@@ -112,11 +112,11 @@ public class Snippet017TableViewerHideShowColumns {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
 		 *      java.lang.Object, java.lang.Object)
 		 */
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		public void inputChanged(Viewer<MyModel[]> viewer, MyModel[] oldInput, MyModel[] newInput) {
 
 		}
 
@@ -147,7 +147,7 @@ public class Snippet017TableViewerHideShowColumns {
 	}
 
 	public Snippet017TableViewerHideShowColumns(Shell shell) {
-		final TableViewer v = new TableViewer(shell, SWT.BORDER
+		final TableViewer<MyModel,MyModel[]> v = new TableViewer<MyModel,MyModel[]>(shell, SWT.BORDER
 				| SWT.FULL_SELECTION);
 		v.setLabelProvider(new MyLabelProvider());
 		v.setContentProvider(new MyContentProvider());
@@ -159,7 +159,7 @@ public class Snippet017TableViewerHideShowColumns {
 		column = new TableColumn(v.getTable(), SWT.NONE);
 		column.setWidth(200);
 		column.setText("Column 2");
-		
+
 		column = new TableColumn(v.getTable(), SWT.NONE);
 		column.setWidth(200);
 		column.setText("Column 3");
@@ -171,13 +171,13 @@ public class Snippet017TableViewerHideShowColumns {
 		addMenu(v);
 	}
 
-	private void addMenu(TableViewer v) {
+	private void addMenu(TableViewer<MyModel,MyModel[]> v) {
 		final MenuManager mgr = new MenuManager();
 		Action action;
-		
+
 		for( int i = 0; i < v.getTable().getColumnCount(); i++ ) {
 			final TableColumn column = v.getTable().getColumn(i);
-			
+
 			action = new Action(v.getTable().getColumn(i).getText(),SWT.CHECK) {
 				public void runWithEvent(Event event) {
 					if( ! isChecked() ) {
@@ -188,17 +188,17 @@ public class Snippet017TableViewerHideShowColumns {
 						t.run();
 					}
 				}
-				
+
 			};
 			action.setChecked(true);
 			mgr.add(action);
 		}
-		
+
 		v.getControl().setMenu(mgr.createContextMenu(v.getControl()));
 	}
-	
-	
-	
+
+
+
 	private MyModel[] createModel() {
 		MyModel[] elements = new MyModel[10];
 
