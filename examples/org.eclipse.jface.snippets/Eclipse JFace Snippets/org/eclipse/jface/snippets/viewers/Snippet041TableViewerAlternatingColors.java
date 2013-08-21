@@ -29,27 +29,27 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TableItem;
 
 /**
- * Demonstrate alternating row colors using new Jace 3.3 API 
- * 
+ * Demonstrate alternating row colors using new Jace 3.3 API
+ *
  * @author Tom Schindl <tom.schindl@bestsolution.at>
- * 
+ *
  */
 public class Snippet041TableViewerAlternatingColors {
 
-	private class MyContentProvider implements IStructuredContentProvider {
-		
+	private class MyContentProvider implements IStructuredContentProvider<MyModel,MyModel[]> {
+
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
-		public Object[] getElements(Object inputElement) {
-			return (MyModel[]) inputElement;
+		public MyModel[] getElements(MyModel[] inputElement) {
+			return inputElement;
 		}
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 		 */
 		public void dispose() {
@@ -58,11 +58,11 @@ public class Snippet041TableViewerAlternatingColors {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
 		 *      java.lang.Object, java.lang.Object)
 		 */
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		public void inputChanged(Viewer<MyModel[]> viewer, MyModel[] oldInput, MyModel[] newInput) {
 		}
 
 	}
@@ -81,10 +81,10 @@ public class Snippet041TableViewerAlternatingColors {
 
 	private class OptimizedIndexSearcher {
 		private int lastIndex = 0;
-		
+
 		public boolean isEven(TableItem item) {
 			TableItem[] items = item.getParent().getItems();
-			
+
 			// 1. Search the next ten items
 			for( int i = lastIndex; i < items.length && lastIndex + 10 > i; i++ ) {
 				if( items[i] == item ) {
@@ -92,7 +92,7 @@ public class Snippet041TableViewerAlternatingColors {
 					return lastIndex % 2 == 0;
 				}
 			}
-			
+
 			// 2. Search the previous ten items
 			for( int i = lastIndex; i < items.length && lastIndex - 10 > i; i-- ) {
 				if( items[i] == item ) {
@@ -100,7 +100,7 @@ public class Snippet041TableViewerAlternatingColors {
 					return lastIndex % 2 == 0;
 				}
 			}
-			
+
 			// 3. Start from the beginning
 			for( int i = 0; i < items.length; i++ ) {
 				if( items[i] == item ) {
@@ -108,77 +108,77 @@ public class Snippet041TableViewerAlternatingColors {
 					return lastIndex % 2 == 0;
 				}
 			}
-		
+
 			return false;
 		}
 	}
-	
+
 	public Snippet041TableViewerAlternatingColors(Shell shell) {
-		final TableViewer v = new TableViewer(shell, SWT.BORDER
+		final TableViewer<MyModel,MyModel[]> v = new TableViewer<MyModel,MyModel[]>(shell, SWT.BORDER
 				| SWT.FULL_SELECTION|SWT.VIRTUAL);
 		v.setContentProvider(new MyContentProvider());
 
 		final OptimizedIndexSearcher searcher = new OptimizedIndexSearcher();
-		
-		TableViewerColumn column = new TableViewerColumn(v, SWT.NONE);
+
+		TableViewerColumn<MyModel,MyModel[]> column = new TableViewerColumn<MyModel,MyModel[]>(v, SWT.NONE);
 		column.getColumn().setWidth(200);
 		column.getColumn().setText("Column 1");
-		column.setLabelProvider(new ColumnLabelProvider() {
+		column.setLabelProvider(new ColumnLabelProvider<MyModel,MyModel[]>() {
 			boolean even = true;
-			
-			public Color getBackground(Object element) {
+
+			public Color getBackground(MyModel element) {
 				if( even ) {
 					return null;
 				} else {
 					return v.getTable().getDisplay().getSystemColor(SWT.COLOR_GRAY);
 				}
 			}
-			
-			public void update(ViewerCell cell) {
+
+			public void update(ViewerCell<MyModel> cell) {
 				even = searcher.isEven((TableItem)cell.getItem());
 				super.update(cell);
 			}
 		});
 
-		column = new TableViewerColumn(v, SWT.NONE);
+		column = new TableViewerColumn<MyModel,MyModel[]>(v, SWT.NONE);
 		column.getColumn().setWidth(200);
 		column.getColumn().setText("Column 2");
-		column.setLabelProvider(new ColumnLabelProvider() {
+		column.setLabelProvider(new ColumnLabelProvider<MyModel,MyModel[]>() {
 			boolean even = true;
 
-			public Color getBackground(Object element) {
+			public Color getBackground(MyModel element) {
 				if( even ) {
 					return null;
 				} else {
 					return v.getTable().getDisplay().getSystemColor(SWT.COLOR_GRAY);
 				}
 			}
-			
-			public void update(ViewerCell cell) {
+
+			public void update(ViewerCell<MyModel> cell) {
 				even = searcher.isEven((TableItem)cell.getItem());
 				super.update(cell);
 			}
-			
+
 		});
 
 		MyModel[] model = createModel();
 		v.setInput(model);
 		v.getTable().setLinesVisible(true);
 		v.getTable().setHeaderVisible(true);
-		
+
 		final ViewerFilter filter = new ViewerFilter() {
 
 			public boolean select(Viewer viewer, Object parentElement,
 					Object element) {
 				return ((MyModel)element).counter % 2 == 0;
 			}
-			
+
 		};
-		
+
 		Button b = new Button(shell,SWT.PUSH);
 		b.addSelectionListener(new SelectionAdapter() {
 			boolean b = true;
-			
+
 			public void widgetSelected(SelectionEvent e) {
 				if( b ) {
 					v.setFilters(new ViewerFilter[] {filter});
@@ -188,7 +188,7 @@ public class Snippet041TableViewerAlternatingColors {
 					b = true;
 				}
 			}
-			
+
 		});
 	}
 
