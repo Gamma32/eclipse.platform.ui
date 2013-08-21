@@ -21,67 +21,67 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * A simple TableViewer to demonstrate usage
- * 
+ *
  * @author Tom Schindl <tom.schindl@bestsolution.at>
  *
  */
 public class Snippet001TableViewer {
-	private class MyContentProvider implements IStructuredContentProvider {
+	private class MyContentProvider implements IStructuredContentProvider<MyModel,MyModel[]> {
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
-		public Object[] getElements(Object inputElement) {
-			return (MyModel[])inputElement;
+		public MyModel[] getElements(MyModel[] inputElement) {
+			return inputElement;
 		}
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 		 */
 		public void dispose() {
-			
+
 		}
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 		 */
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-			
+		public void inputChanged(Viewer<MyModel[]> viewer, MyModel[] oldInput, MyModel[] newInput) {
+
 		}
-		
+
 	}
-	
+
 	public class MyModel {
 		public int counter;
-		
+
 		public MyModel(int counter) {
 			this.counter = counter;
 		}
-		
+
 		public String toString() {
 			return "Item " + this.counter;
 		}
 	}
-	
+
 	public Snippet001TableViewer(Shell shell) {
-		final TableViewer v = new TableViewer(shell);
-		v.setLabelProvider(new LabelProvider());
+		final TableViewer<MyModel,MyModel[]> v = new TableViewer<MyModel,MyModel[]>(shell);
+		v.setLabelProvider(new LabelProvider<MyModel>());
 		v.setContentProvider(new MyContentProvider());
 		MyModel[] model = createModel();
 		v.setInput(model);
 		v.getTable().setLinesVisible(true);
 	}
-	
+
 	private MyModel[] createModel() {
 		MyModel[] elements = new MyModel[10];
-		
+
 		for( int i = 0; i < 10; i++ ) {
 			elements[i] = new MyModel(i);
 		}
-		
+
 		return elements;
 	}
-	
+
 	/**
 	 * @param args
 	 */
@@ -91,11 +91,11 @@ public class Snippet001TableViewer {
 		shell.setLayout(new FillLayout());
 		new Snippet001TableViewer(shell);
 		shell.open ();
-		
+
 		while (!shell.isDisposed ()) {
 			if (!display.readAndDispatch ()) display.sleep ();
 		}
-		
+
 		display.dispose ();
 
 	}
