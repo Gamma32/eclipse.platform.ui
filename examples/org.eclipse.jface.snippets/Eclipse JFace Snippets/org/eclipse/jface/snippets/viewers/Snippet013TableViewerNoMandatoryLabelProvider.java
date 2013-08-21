@@ -31,26 +31,26 @@ import org.eclipse.swt.widgets.TableColumn;
 /**
  * Example usage of none mandatory interfaces of ITableFontProvider and
  * ITableColorProvider
- * 
+ *
  * @author Tom Schindl <tom.schindl@bestsolution.at>
- * 
+ *
  */
 public class Snippet013TableViewerNoMandatoryLabelProvider {
 
-	private class MyContentProvider implements IStructuredContentProvider {
+	private class MyContentProvider implements IStructuredContentProvider<MyModel,MyModel[]> {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
-		public Object[] getElements(Object inputElement) {
+		public MyModel[] getElements(MyModel[] inputElement) {
 			return (MyModel[]) inputElement;
 		}
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 		 */
 		public void dispose() {
@@ -59,11 +59,11 @@ public class Snippet013TableViewerNoMandatoryLabelProvider {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
 		 *      java.lang.Object, java.lang.Object)
 		 */
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		public void inputChanged(Viewer<MyModel[]> viewer, MyModel[] oldInput, MyModel[] newInput) {
 
 		}
 
@@ -118,7 +118,7 @@ public class Snippet013TableViewerNoMandatoryLabelProvider {
 	}
 
 	public Snippet013TableViewerNoMandatoryLabelProvider(Shell shell) {
-		final TableViewer v = new TableViewer(shell, SWT.BORDER
+		final TableViewer<MyModel,MyModel[]> v = new TableViewer<MyModel,MyModel[]>(shell, SWT.BORDER
 				| SWT.FULL_SELECTION);
 		v.setLabelProvider(new MyLabelProvider());
 		v.setContentProvider(new MyContentProvider());
