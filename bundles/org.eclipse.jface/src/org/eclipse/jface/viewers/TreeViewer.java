@@ -90,7 +90,7 @@ public class TreeViewer<E,I> extends AbstractTreeViewer<E, I> {
 	/**
 	 * The row object reused
 	 */
-	private TreeViewerRow cachedRow;
+	private TreeViewerRow<E> cachedRow;
 
 	/**
 	 * true if we are inside a preservingSelection() call

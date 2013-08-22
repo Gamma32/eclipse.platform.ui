@@ -170,6 +170,7 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 	final protected Widget[] internalFindItems(Object parentElementOrTreePath) {
 		Widget[] widgets;
 		if (parentElementOrTreePath instanceof TreePath) {
+			@SuppressWarnings("unchecked")
 			TreePath<E> path = (TreePath<E>) parentElementOrTreePath;
 			Widget w = internalFindItem(path);
 			if (w == null) {
@@ -178,7 +179,9 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 				widgets = new Widget[] { w };
 			}
 		} else {
-			widgets = findItems((E)parentElementOrTreePath);
+			@SuppressWarnings("unchecked")
+			E element = (E)parentElementOrTreePath;
+			widgets = findItems(element);
 		}
 		return widgets;
 	}
@@ -228,10 +231,10 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 		E parent;
 		TreePath<E> path;
 		if (parentElementOrTreePath instanceof TreePath) {
-			path = (TreePath<E>) parentElementOrTreePath;
+			path = castObjectToTreePath(parentElementOrTreePath);
 			parent = path.getLastSegment();
 		} else {
-			parent = (E) parentElementOrTreePath;
+			parent = castObjectToElement(parentElementOrTreePath);
 			path = null;
 		}
 
@@ -631,7 +634,7 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 
 			TreePath<E> path = null;
 			if (parentElementOrTreePath instanceof TreePath) {
-				path = (TreePath<E>) parentElementOrTreePath;
+				path = castObjectToTreePath(parentElementOrTreePath);
 			} else {
 				Object parent = parentElementOrTreePath;
 				Widget w = internalGetWidgetToSelect(parent);
@@ -666,7 +669,7 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 	 * @param childElement
 	 *            the child element
 	 */
-	public void add(Object parentElementOrTreePath, Object childElement) {
+	public void add(Object parentElementOrTreePath, E childElement) {
 		add(parentElementOrTreePath, (E[])new Object[] { childElement });
 	}
 
@@ -714,6 +717,7 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 	 */
 	@Override
 	protected void associate(E element, Item item) {
+		@SuppressWarnings("unchecked")
 		E data = (E) item.getData();
 		if (data != null && data != element && equals(data, element)) {
 			// workaround for PR 1FV62BT
@@ -945,7 +949,9 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 
 		// If the control is virtual, we cannot use the cached viewer row object. See bug 188663.
 		if (isVirtual) {
-			viewerRowFromItem = (ViewerRow<E>) viewerRowFromItem.clone();
+			@SuppressWarnings("unchecked")
+			ViewerRow<E> clonedViewRowFrontItem = (ViewerRow<E>) viewerRowFromItem.clone();
+			viewerRowFromItem = clonedViewRowFrontItem;
 		}
 
 		for (int column = 0; column < columnCount; column++) {
@@ -999,6 +1005,7 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 		CustomHashtable<E,E> itemSet = newHashtable(n * 2 + 1);
 		for (Iterator<Item> i = items.iterator(); i.hasNext();) {
 			Item item = i.next();
+			@SuppressWarnings("unchecked")
 			E element = (E)item.getData();
 			itemSet.put(element, element);
 		}
@@ -1006,8 +1013,10 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 		// Go through the items of the current collection
 		// If there is a mismatch return false
 		for (int i = 0; i < current.length; i++) {
+			@SuppressWarnings("unchecked")
+			E element = (E) current[i].getData();
 			if (current[i].getData() == null
-					|| !itemSet.containsKey((E) current[i].getData())) {
+					|| !itemSet.containsKey(element)) {
 				return false;
 			}
 		}
@@ -1030,6 +1039,7 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 				if (fullMap) {
 					associate(element, item);
 				} else {
+					@SuppressWarnings("unchecked")
 					E data = (E)item.getData();
 					if (data != null) {
 						unmapElement(data, item);
@@ -1099,6 +1109,7 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 		setBusy(true);
 		try {
 			for (int i = 0; i < listeners.length; ++i) {
+				@SuppressWarnings("unchecked")
 				final ITreeViewerListener<E,I> l = (ITreeViewerListener<E,I>) listeners[i];
 				SafeRunnable.run(new SafeRunnable() {
 					public void run() {
@@ -1125,6 +1136,7 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 		setBusy(true);
 		try {
 			for (int i = 0; i < listeners.length; ++i) {
+				@SuppressWarnings("unchecked")
 				final ITreeViewerListener<E,I> l = (ITreeViewerListener<E,I>) listeners[i];
 				SafeRunnable.run(new SafeRunnable() {
 					public void run() {
@@ -1205,6 +1217,7 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 		ArrayList<E> result = new ArrayList<E>(items.size());
 		for (Iterator<Item> it = items.iterator(); it.hasNext();) {
 			Item item = it.next();
+			@SuppressWarnings("unchecked")
 			E data = (E)item.getData();
 			if (data != null) {
 				result.add(data);
@@ -1350,7 +1363,7 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 			Object parent;
 			TreePath<E> path;
 			if (parentElementOrTreePath instanceof TreePath) {
-				path = (TreePath<E>) parentElementOrTreePath;
+				path = castObjectToTreePath(parentElementOrTreePath);
 				parent = path.getLastSegment();
 			} else {
 				parent = parentElementOrTreePath;
@@ -1358,14 +1371,17 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 			}
 			if (parent != null) {
 				if (equals(parent, getRoot())) {
+					@SuppressWarnings("unchecked")
 					I inputParent = (I) parent;
 					return super.getRawChildren(inputParent);
 				}
 				IContentProvider<I> cp = getContentProvider();
 				if (cp instanceof ITreePathContentProvider) {
+					@SuppressWarnings("unchecked")
 					ITreePathContentProvider<E,I> tpcp = (ITreePathContentProvider<E,I>) cp;
 					if (path == null) {
 						// A path was not provided so try and find one
+						@SuppressWarnings("unchecked")
 						E elementParent = (E) parent;
 						Widget w = findItem(elementParent);
 						if (w instanceof Item) {
@@ -1382,7 +1398,9 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 						return result;
 					}
 				} else if (cp instanceof ITreeContentProvider) {
+					@SuppressWarnings("unchecked")
 					E elementParent = (E) parent;
+					@SuppressWarnings("unchecked")
 					ITreeContentProvider<E,I> tcp = (ITreeContentProvider<E,I>) cp;
 					E[] result = tcp.getChildren(elementParent);
 					if (result != null) {
@@ -1452,6 +1470,7 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 		ArrayList<E> list = new ArrayList<E>(items.length);
 		for (int i = 0; i < items.length; i++) {
 			Widget item = items[i];
+			@SuppressWarnings("unchecked")
 			E e = (E) item.getData();
 			if (e != null) {
 				list.add(e);
@@ -1501,7 +1520,9 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 	 */
 	protected void handleTreeCollapse(TreeEvent event) {
 		if (event.item.getData() != null) {
-			fireTreeCollapsed(new TreeExpansionEvent<E,I>(this, (E) event.item.getData()));
+			@SuppressWarnings("unchecked")
+			E element = (E) event.item.getData();
+			fireTreeCollapsed(new TreeExpansionEvent<E,I>(this, element));
 		}
 	}
 
@@ -1514,7 +1535,9 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 	protected void handleTreeExpand(TreeEvent event) {
 		createChildren(event.item);
 		if (event.item.getData() != null) {
-			fireTreeExpanded(new TreeExpansionEvent<E,I>(this, (E) event.item.getData()));
+			@SuppressWarnings("unchecked")
+			E element = (E) event.item.getData();
+			fireTreeExpanded(new TreeExpansionEvent<E,I>(this, element));
 		}
 	}
 
@@ -1586,6 +1609,7 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 			if (widget instanceof Item) {
 				Item item = (Item) widget;
 				setExpanded(item, false);
+				@SuppressWarnings("unchecked")
 				E element = (E) item.getData();
 				if (element != null && level == ALL_LEVELS) {
 					if (optionallyPruneChildren(item, element)) {
@@ -1693,7 +1717,9 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 	 */
 	private Object internalToElement(Object elementOrPath) {
 		if (elementOrPath instanceof TreePath) {
-			return ((TreePath<E>) elementOrPath).getLastSegment();
+			@SuppressWarnings("unchecked")
+			TreePath<E> treePath = (TreePath<E>) elementOrPath;
+			return treePath.getLastSegment();
 		}
 		return elementOrPath;
 	}
@@ -1712,13 +1738,17 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 	 */
 	protected Object getParentElement(Object elementOrTreePath) {
 		if (elementOrTreePath instanceof TreePath) {
+			@SuppressWarnings("unchecked")
 			TreePath<E> treePath = (TreePath<E>) elementOrTreePath;
-			return (treePath).getParentPath();
+			return treePath.getParentPath();
 		}
 		IContentProvider<I> cp = getContentProvider();
 		if (cp instanceof ITreePathContentProvider) {
+			@SuppressWarnings("unchecked")
 			ITreePathContentProvider<E,I> tpcp = (ITreePathContentProvider<E,I>) cp;
-			TreePath<E>[] paths = tpcp.getParents((E)elementOrTreePath);
+			@SuppressWarnings("unchecked")
+			E element = (E) elementOrTreePath;
+			TreePath<E>[] paths = tpcp.getParents(element);
 			if (paths.length > 0) {
 				if (paths[0].getSegmentCount() == 0) {
 					return getRoot();
@@ -1727,8 +1757,11 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 			}
 		}
 		if (cp instanceof ITreeContentProvider) {
+			@SuppressWarnings("unchecked")
 			ITreeContentProvider<E,I> tcp = (ITreeContentProvider<E,I>) cp;
-			return tcp.getParent((E)elementOrTreePath);
+			@SuppressWarnings("unchecked")
+			E element = (E)elementOrTreePath;
+			return tcp.getParent(element);
 		}
 		return null;
 	}
@@ -1744,6 +1777,7 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 	 */
 	protected Widget internalGetWidgetToSelect(Object elementOrTreePath) {
 		if (elementOrTreePath instanceof TreePath) {
+			@SuppressWarnings("unchecked")
 			TreePath<E> treePath = (TreePath<E>) elementOrTreePath;
 			if (treePath.getSegmentCount() == 0) {
 				return getControl();
@@ -1761,7 +1795,9 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 			}
 			return null;
 		}
-		return findItem((E)elementOrTreePath);
+		@SuppressWarnings("unchecked")
+		E element = (E) elementOrTreePath;
+		return findItem(element);
 	}
 
 	/**
@@ -1781,7 +1817,7 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 	protected void internalExpandToLevel(Widget widget, int level) {
 		if (level == ALL_LEVELS || level > 0) {
 			if (widget instanceof Item && widget.getData() != null
-					&& !isExpandable((Item) widget, null, (E) widget.getData())) {
+					&& !isExpandable((Item) widget, null, castObjectToElement(widget.getData()))) {
 				return;
 			}
 			createChildren(widget, false);
@@ -1867,7 +1903,7 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 			internalRefresh(getControl(), getRoot(), true, updateLabels);
 			return;
 		}
-		Widget[] items = findItems((E)element);
+		Widget[] items = findItems(castObjectToElement(element));
 		if (items.length != 0) {
 			for (int i = 0; i < items.length; i++) {
 				// pick up structure changes too
@@ -3070,7 +3106,7 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 		if (checkBusy())
 			return;
 		if (getComparator() != null || hasFilters()) {
-			add(parentElementOrTreePath, new Object[] { element });
+			add(parentElementOrTreePath, (E[]) new Object[] { element });
 			return;
 		}
 		Widget[] items;
@@ -3235,4 +3271,15 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 		}
 	}
 
+	private E castObjectToElement(Object object){
+		@SuppressWarnings("unchecked")
+		E element = (E) object;
+		return element;
+	}
+
+	private TreePath<E> castObjectToTreePath(Object object){
+		@SuppressWarnings("unchecked")
+		TreePath<E> treePath = (TreePath<E>) object;
+		return treePath;
+	}
 }
