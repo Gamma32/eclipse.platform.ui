@@ -2035,17 +2035,15 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 				Object parent = getParentElement(element);
 				if (parent != null
 						&& !equals(parent, getRoot())
-						&& !(parent instanceof TreePath)) {
-					@SuppressWarnings("unchecked")
-					TreePath<E> treePath = (TreePath<E>) parent;
-					if (treePath.getSegmentCount() == 0) {
-						Widget[] parentItems = internalFindItems(parent);
-						for (int j = 0; j < parentItems.length; j++) {
-							Widget parentItem = parentItems[j];
-							if (parentItem instanceof Item) {
-								updatePlus((Item) parentItem,
-										castObjectToElement(parent));
-							}
+						&& !(parent instanceof TreePath && ((TreePath<E>) parent)
+								.getSegmentCount() == 0)) {
+
+					Widget[] parentItems = internalFindItems(parent);
+					for (int j = 0; j < parentItems.length; j++) {
+						Widget parentItem = parentItems[j];
+						if (parentItem instanceof Item) {
+							updatePlus((Item) parentItem,
+									castObjectToElement(parent));
 						}
 					}
 				}
@@ -2230,14 +2228,14 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.StructuredViewer#getFilteredChildren(java.lang.Object)
-	 */
-	@Override
-	protected E[] getFilteredChildren(Object parent) {
-		E[] result = getRawChildren(parent);
-		return internalFilter(result, parent);
-	}
+//	/* (non-Javadoc)
+//	 * @see org.eclipse.jface.viewers.StructuredViewer#getFilteredChildren(java.lang.Object)
+//	 */
+//	@Override
+//	protected E[] getFilteredChildren(Object parent) {
+//		E[] result = getRawChildren(parent);
+//		return internalFilter(result, parent);
+//	}
 
 	/**
 	 * Return whether the given element is expandable.

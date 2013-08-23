@@ -929,21 +929,8 @@ public abstract class StructuredViewer<E,I> extends ContentViewer<E,I> implement
 	 *            the parent element
 	 * @return a filtered array of child elements
 	 */
-	protected E[] getFilteredChildren(I parent) {
+	protected E[] getFilteredChildren(Object parent) {
 		E[] result = getRawChildren(parent);
-		return internalFilter(result, parent);
-	}
-
-	/**
-	 * @param elements
-	 * 			elements to be filtered
-	 * @param parent
-	 * 			the parent element
-	 * @return a filtered array of child elements
-	 * @since 3.10
-	 */
-	protected E[] internalFilter(E[] elements, Object parent){
-		E[] result = elements;
 		if (filters != null) {
 			for (Iterator<ViewerFilter> iter = filters.iterator(); iter.hasNext();) {
 				ViewerFilter f = iter.next();
@@ -1033,13 +1020,15 @@ public abstract class StructuredViewer<E,I> extends ContentViewer<E,I> implement
 	 *            the parent element
 	 * @return the child elements
 	 */
-	protected E[] getRawChildren(I parent) {
+	protected E[] getRawChildren(Object parent) {
 		E[] result = null;
 		if (parent != null) {
 			@SuppressWarnings("unchecked")
 			IStructuredContentProvider<E,I> cp = (IStructuredContentProvider<E,I>) getContentProvider();
 			if (cp != null) {
-				result = cp.getElements(parent);
+				@SuppressWarnings("unchecked")
+				I input = (I) parent;
+				result = cp.getElements(input);
 				assertElementsNotNull(result);
 			}
 		}
