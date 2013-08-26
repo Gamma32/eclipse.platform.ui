@@ -2035,9 +2035,8 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 				Object parent = getParentElement(element);
 				if (parent != null
 						&& !equals(parent, getRoot())
-						&& !(parent instanceof TreePath && ((TreePath<E>) parent)
-								.getSegmentCount() == 0)) {
-
+						&& !(parent instanceof TreePath && castObjectToTreePath(
+								parent).getSegmentCount() == 0)) {
 					Widget[] parentItems = internalFindItems(parent);
 					for (int j = 0; j < parentItems.length; j++) {
 						Widget parentItem = parentItems[j];
