@@ -23,14 +23,15 @@ import org.eclipse.core.runtime.Assert;
  * <p>
  * This class is not intended to be subclassed.
  * </p>
+ * @param <E>
  * @noextend This class is not intended to be subclassed by clients.
  */
-public class StructuredSelection implements IStructuredSelection {
+public class StructuredSelection<E> implements IStructuredSelection<E> {
 
     /**
      * The element that make up this structured selection.
      */
-    private Object[] elements;
+    private E[] elements;
 
     /**
      * The element comparer, or <code>null</code>
@@ -44,7 +45,7 @@ public class StructuredSelection implements IStructuredSelection {
     public static final StructuredSelection EMPTY = new StructuredSelection();
 
     /**
-     * Creates a new empty selection.  
+     * Creates a new empty selection.
      * See also the static field <code>EMPTY</code> which contains an empty selection singleton.
      *
      * @see #EMPTY
@@ -58,9 +59,9 @@ public class StructuredSelection implements IStructuredSelection {
      *
      * @param elements an array of elements
      */
-    public StructuredSelection(Object[] elements) {
+    public StructuredSelection(E[] elements) {
     	Assert.isNotNull(elements);
-        this.elements = new Object[elements.length];
+        this.elements = (E[]) new Object[elements.length];
         System.arraycopy(elements, 0, this.elements, 0, elements.length);
     }
 
@@ -70,16 +71,16 @@ public class StructuredSelection implements IStructuredSelection {
      *
      * @param element the element
      */
-    public StructuredSelection(Object element) {
+    public StructuredSelection(E element) {
         Assert.isNotNull(element);
-        elements = new Object[] { element };
+        elements = (E[]) new Object[] { element };
     }
 
     /**
-     * Creates a structured selection from the given <code>List</code>. 
+     * Creates a structured selection from the given <code>List</code>.
      * @param elements list of selected elements
      */
-    public StructuredSelection(List elements) {
+    public StructuredSelection(List<E> elements) {
     	this(elements, null);
     }
 
@@ -87,17 +88,17 @@ public class StructuredSelection implements IStructuredSelection {
 	 * Creates a structured selection from the given <code>List</code> and
 	 * element comparer. If an element comparer is provided, it will be used to
 	 * determine equality between structured selection objects provided that
-	 * they both are based on the same (identical) comparer. See bug 
-	 * 
+	 * they both are based on the same (identical) comparer. See bug
+	 *
 	 * @param elements
 	 *            list of selected elements
 	 * @param comparer
 	 *            the comparer, or null
 	 * @since 3.4
 	 */
-	public StructuredSelection(List elements, IElementComparer comparer) {
+	public StructuredSelection(List<E> elements, IElementComparer comparer) {
         Assert.isNotNull(elements);
-        this.elements = elements.toArray();
+        this.elements = (E[]) elements.toArray();
         this.comparer = comparer;
 	}
 
@@ -118,7 +119,7 @@ public class StructuredSelection implements IStructuredSelection {
         if (!(o instanceof StructuredSelection)) {
             return false;
         }
-        StructuredSelection s2 = (StructuredSelection) o;
+        StructuredSelection<E> s2 = (StructuredSelection<E>) o;
 
         // either or both empty?
         if (isEmpty()) {
@@ -129,7 +130,7 @@ public class StructuredSelection implements IStructuredSelection {
         }
 
         boolean useComparer = comparer != null && comparer == s2.comparer;
-        
+
         //size
         int myLen = elements.length;
         if (myLen != s2.elements.length) {
@@ -153,7 +154,7 @@ public class StructuredSelection implements IStructuredSelection {
     /* (non-Javadoc)
      * Method declared in IStructuredSelection.
      */
-    public Object getFirstElement() {
+    public E getFirstElement() {
         return isEmpty() ? null : elements[0];
     }
 
@@ -167,8 +168,8 @@ public class StructuredSelection implements IStructuredSelection {
     /* (non-Javadoc)
      * Method declared in IStructuredSelection.
      */
-    public Iterator iterator() {
-        return Arrays.asList(elements == null ? new Object[0] : elements)
+    public Iterator<E> iterator() {
+        return Arrays.<E>asList(elements == null ? (E[])new Object[0] : elements)
                 .iterator();
     }
 
@@ -182,15 +183,15 @@ public class StructuredSelection implements IStructuredSelection {
     /* (non-Javadoc)
      * Method declared in IStructuredSelection.
      */
-    public Object[] toArray() {
-        return elements == null ? new Object[0] : (Object[]) elements.clone();
+    public E[] toArray() {
+        return (E[]) (elements == null ? new Object[0] : (Object[]) elements.clone());
     }
 
     /* (non-Javadoc)
      * Method declared in IStructuredSelection.
      */
-    public List toList() {
-        return Arrays.asList(elements == null ? new Object[0] : elements);
+    public List<E> toList() {
+        return Arrays.<E>asList(elements == null ? (E[])new Object[0] : elements);
     }
 
     /**

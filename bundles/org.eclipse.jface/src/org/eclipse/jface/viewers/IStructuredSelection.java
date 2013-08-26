@@ -15,22 +15,23 @@ import java.util.List;
 
 /**
  * A selection containing elements.
+ * @param <E>
  */
-public interface IStructuredSelection extends ISelection {
+public interface IStructuredSelection<E> extends ISelection {
     /**
      * Returns the first element in this selection, or <code>null</code>
      * if the selection is empty.
      *
      * @return an element, or <code>null</code> if none
      */
-    public Object getFirstElement();
+    public E getFirstElement();
 
     /**
      * Returns an iterator over the elements of this selection.
      *
      * @return an iterator over the selected elements
      */
-    public Iterator iterator();
+    public Iterator<E> iterator();
 
     /**
      * Returns the number of elements selected in this selection.
@@ -44,15 +45,15 @@ public interface IStructuredSelection extends ISelection {
      *
      * @return the selected elements as an array
      */
-    public Object[] toArray();
+    public E[] toArray();
 
     /**
      * Returns the elements in this selection as a <code>List</code>.
      * <strong>Note</strong> In the default implementation of {@link #toList()} in
-     * {@link StructuredSelection} the returned list is not a copy of the elements of the 
+     * {@link StructuredSelection} the returned list is not a copy of the elements of the
      * receiver and modifying it will modify the contents of the selection.
      *
      * @return the selected elements as a list
      */
-    public List toList();
+    public List<E> toList();
 }
