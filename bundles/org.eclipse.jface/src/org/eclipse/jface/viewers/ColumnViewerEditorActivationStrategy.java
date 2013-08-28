@@ -21,11 +21,13 @@ import org.eclipse.swt.events.MouseEvent;
  * This class is responsible to determine if a cell selection event is triggers
  * an editor activation. Implementors can extend and overwrite to implement
  * custom editing behavior
+ * @param <E>
+ * @param <I>
  *
  * @since 3.3
  */
-public class ColumnViewerEditorActivationStrategy {
-	private ColumnViewer viewer;
+public class ColumnViewerEditorActivationStrategy<E,I> {
+	private ColumnViewer<E,I> viewer;
 
 	private KeyListener keyboardActivationListener;
 
@@ -33,7 +35,7 @@ public class ColumnViewerEditorActivationStrategy {
 	 * @param viewer
 	 *            the viewer the editor support is attached to
 	 */
-	public ColumnViewerEditorActivationStrategy(ColumnViewer viewer) {
+	public ColumnViewerEditorActivationStrategy(ColumnViewer<E,I> viewer) {
 		this.viewer = viewer;
 	}
 
@@ -44,7 +46,7 @@ public class ColumnViewerEditorActivationStrategy {
 	 */
 	protected boolean isEditorActivationEvent(
 			ColumnViewerEditorActivationEvent event) {
-		boolean singleSelect = ((IStructuredSelection)viewer.getSelection()).size() == 1;
+		boolean singleSelect = ((IStructuredSelection<E>)viewer.getSelection()).size() == 1;
 		boolean isLeftMouseSelect = event.eventType == ColumnViewerEditorActivationEvent.MOUSE_CLICK_SELECTION && ((MouseEvent)event.sourceEvent).button == 1;
 
 		return singleSelect && (isLeftMouseSelect
@@ -55,14 +57,14 @@ public class ColumnViewerEditorActivationStrategy {
 	/**
 	 * @return the cell holding the current focus
 	 */
-	private ViewerCell getFocusCell() {
+	private ViewerCell<E> getFocusCell() {
 		return viewer.getColumnViewerEditor().getFocusCell();
 	}
 
 	/**
 	 * @return the viewer
 	 */
-	public ColumnViewer getViewer() {
+	public ColumnViewer<E,I> getViewer() {
 		return viewer;
 	}
 
@@ -78,7 +80,7 @@ public class ColumnViewerEditorActivationStrategy {
 				keyboardActivationListener = new KeyListener() {
 
 					public void keyPressed(KeyEvent e) {
-						ViewerCell cell = getFocusCell();
+						ViewerCell<E> cell = getFocusCell();
 
 						if (cell != null) {
 							viewer

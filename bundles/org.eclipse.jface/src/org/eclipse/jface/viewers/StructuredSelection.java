@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.Assert;
  * <p>
  * This class is not intended to be subclassed.
  * </p>
- * @param <E>
+ * @param <E> Type of an element of the model
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class StructuredSelection<E> implements IStructuredSelection<E> {
@@ -42,7 +42,7 @@ public class StructuredSelection<E> implements IStructuredSelection<E> {
      * The canonical empty selection. This selection should be used instead of
      * <code>null</code>.
      */
-    public static final StructuredSelection EMPTY = new StructuredSelection();
+    public static final StructuredSelection<Object> EMPTY = new StructuredSelection<Object>();
 
     /**
      * Creates a new empty selection.
@@ -119,7 +119,8 @@ public class StructuredSelection<E> implements IStructuredSelection<E> {
         if (!(o instanceof StructuredSelection)) {
             return false;
         }
-        StructuredSelection<E> s2 = (StructuredSelection<E>) o;
+        @SuppressWarnings("unchecked")
+		StructuredSelection<E> s2 = (StructuredSelection<E>) o;
 
         // either or both empty?
         if (isEmpty()) {

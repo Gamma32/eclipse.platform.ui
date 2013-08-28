@@ -15,7 +15,7 @@ import java.util.List;
 
 /**
  * A selection containing elements.
- * @param <E>
+ * @param <E> Type of an element of the model
  */
 public interface IStructuredSelection<E> extends ISelection {
     /**
