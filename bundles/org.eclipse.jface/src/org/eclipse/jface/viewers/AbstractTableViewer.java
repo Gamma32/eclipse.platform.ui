@@ -89,8 +89,8 @@ public abstract class AbstractTableViewer<E,I> extends ColumnViewer<E,I> {
 						IContentProvider<I> contentProvider = getContentProvider();
 						// If we are building lazily then request lookup now
 						if (contentProvider instanceof ILazyContentProvider) {
-							((ILazyContentProvider) contentProvider)
-									.updateElement(index);
+							ILazyContentProvider<I> lazyContentProvider = ((ILazyContentProvider<I>) contentProvider);
+							lazyContentProvider.updateElement(index);
 							return;
 						}
 					}
@@ -530,6 +530,7 @@ public abstract class AbstractTableViewer<E,I> extends ColumnViewer<E,I> {
 		List<E> result = new ArrayList<E>();
 		int[] selectionIndices = doGetSelectionIndices();
 		if (getContentProvider() instanceof ILazyContentProvider) {
+			@SuppressWarnings("rawtypes")
 			ILazyContentProvider lazy = (ILazyContentProvider) getContentProvider();
 			for (int i = 0; i < selectionIndices.length; i++) {
 				int selectionIndex = selectionIndices[i];
@@ -1002,6 +1003,7 @@ public abstract class AbstractTableViewer<E,I> extends ColumnViewer<E,I> {
 		}
 
 		if (getContentProvider() instanceof ILazyContentProvider) {
+			@SuppressWarnings("rawtypes")
 			ILazyContentProvider provider = (ILazyContentProvider) getContentProvider();
 
 			// Now go through it again until all is done or we are no longer

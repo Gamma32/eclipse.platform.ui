@@ -2677,6 +2677,7 @@ public abstract class AbstractTreeViewer<E,I> extends ColumnViewer<E,I> {
 	 *            the child elements, or null
 	 * @deprecated this is no longer called by the framework
 	 */
+	@SuppressWarnings("unchecked")
 	@Deprecated
 	protected void updateChildren(Widget widget, Object parent,
 			Object[] elementChildren) {

@@ -909,6 +909,7 @@ public class TreeViewer<E,I> extends AbstractTreeViewer<E, I> {
 	public void remove(final Object parentOrTreePath, final int index) {
 		if (checkBusy())
 			return;
+		@SuppressWarnings("rawtypes")
 		final List<TreePath> oldSelection = new LinkedList<TreePath>(Arrays
 				.asList(((TreeSelection) getSelection()).getPaths()));
 		preservingSelection(new Runnable() {
@@ -952,7 +953,8 @@ public class TreeViewer<E,I> extends AbstractTreeViewer<E, I> {
 				}
 				if (removedPath != null) {
 					boolean removed = false;
-					for (Iterator<TreePath> it = oldSelection.iterator(); it
+					for (@SuppressWarnings("rawtypes")
+					Iterator<TreePath> it = oldSelection.iterator(); it
 							.hasNext();) {
 						@SuppressWarnings({ "unchecked", "cast" })
 						TreePath<E> path = (TreePath<E>) it.next();
@@ -962,11 +964,12 @@ public class TreeViewer<E,I> extends AbstractTreeViewer<E, I> {
 						}
 					}
 					if (removed) {
-						setSelection(new TreeSelection(
-								(TreePath[]) oldSelection
-										.toArray(new TreePath[oldSelection
-												.size()]), getComparer()),
-								false);
+						@SuppressWarnings({ "unchecked", "cast" })
+						TreePath<E>[] oldTreePathSelection = (TreePath<E>[]) oldSelection
+								.toArray(new TreePath[oldSelection.size()]);
+
+						setSelection(new TreeSelection(oldTreePathSelection,
+								getComparer()), false);
 					}
 
 				}
