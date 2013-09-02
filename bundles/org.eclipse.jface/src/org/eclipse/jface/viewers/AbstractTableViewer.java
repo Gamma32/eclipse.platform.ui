@@ -1135,7 +1135,7 @@ public abstract class AbstractTableViewer<E,I> extends ColumnViewer<E,I> {
 	 * @see org.eclipse.jface.viewers.StructuredViewer#assertContentProviderType(org.eclipse.jface.viewers.IContentProvider)
 	 */
 	@Override
-	protected void assertContentProviderType(IContentProvider<I> provider) {
+	protected void assertContentProviderType(IContentProvider<? extends I> provider) {
 		Assert.isTrue(provider instanceof IStructuredContentProvider
 				|| provider instanceof ILazyContentProvider);
 	}
