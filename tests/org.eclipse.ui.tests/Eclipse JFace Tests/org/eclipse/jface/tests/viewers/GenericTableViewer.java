@@ -19,6 +19,7 @@ import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.TableItem;
 import org.junit.Test;
 
 /**
@@ -39,7 +40,8 @@ public class GenericTableViewer extends ViewerTestCase{
 
 	@Test
 	public void test() {
-
+		TableItem[] items = tableViewer.getTable().getItems();
+		assertEquals(4, items.length);
 	}
 
 	/* (non-Javadoc)
@@ -48,20 +50,22 @@ public class GenericTableViewer extends ViewerTestCase{
 	@Override
 	protected StructuredViewer createViewer(Composite parent) {
 		tableViewer = new TableViewer<TestModel, List<TestModel>>(parent);
-		tableViewer.setContentProvider(new IStructuredContentProvider<TestModel, List<TestModel>>() {
+		tableViewer.setContentProvider(new IStructuredContentProvider<Object, Object>() {
 
 			public void dispose() {
-				//Nothing here
+				// TODO Auto-generated method stub
+
 			}
 
-			public void inputChanged(Viewer<List<TestModel>> viewer,
-					List<TestModel> oldInput, List<TestModel> newInput) {
-				//Nothing here
+			public void inputChanged(Viewer<Object> viewer, Object oldInput,
+					Object newInput) {
+
 			}
 
-			public TestModel[] getElements(List<TestModel> inputElement) {
-				return inputElement.toArray(new TestModel[inputElement.size()]);
+			public Object[] getElements(Object inputElement) {
+				return ((List)inputElement).toArray();
 			}
+
 		});
 
 		return tableViewer;
