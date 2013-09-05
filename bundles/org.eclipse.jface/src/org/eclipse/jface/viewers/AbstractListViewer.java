@@ -28,10 +28,10 @@ import org.eclipse.swt.widgets.Widget;
  * actually communicates with the underlying widget.
  * @param <E> Type of an element of the model
  * @param <I> Type of the input
- * 
+ *
  * @see org.eclipse.jface.viewers.ListViewer
  * @see org.eclipse.jface.viewers.ComboViewer
- * 
+ *
  * @since 3.0
  */
 public abstract class AbstractListViewer<E,I> extends StructuredViewer<E,I> {
@@ -39,11 +39,11 @@ public abstract class AbstractListViewer<E,I> extends StructuredViewer<E,I> {
     /**
      * A list of viewer elements.
      */
-    private java.util.List<E> listMap = new ArrayList<E>();
+    private java.util.List<Object> listMap = new ArrayList<Object>();
 
     /**
      * Adds the given string to the underlying widget at the given index
-     *  
+     *
      * @param string the string to add
      * @param index position to insert the string into
      */
@@ -51,7 +51,7 @@ public abstract class AbstractListViewer<E,I> extends StructuredViewer<E,I> {
 
     /**
      * Sets the text of the item at the given index in the underlying widget.
-     * 
+     *
      * @param index index to modify
      * @param string new text
      */
@@ -63,7 +63,7 @@ public abstract class AbstractListViewer<E,I> extends StructuredViewer<E,I> {
      * <p>
      * Note: This is not the actual structure used by the receiver
      * to maintain its selection, so modifying the array will
-     * not affect the receiver. 
+     * not affect the receiver.
      * </p>
      * @return the array of indices of the selected items
      */
@@ -91,7 +91,7 @@ public abstract class AbstractListViewer<E,I> extends StructuredViewer<E,I> {
     /**
      * Removes the item from the underlying widget at the given
      * zero-relative index.
-     * 
+     *
      * @param index the index for the item
      */
     protected abstract void listRemove(int index);
@@ -125,7 +125,7 @@ public abstract class AbstractListViewer<E,I> extends StructuredViewer<E,I> {
      * If this viewer does not have a sorter, the elements are added at the end
      * in the order given; otherwise the elements are inserted at appropriate positions.
      * <p>
-     * This method should be called (by the content provider) when elements 
+     * This method should be called (by the content provider) when elements
      * have been added to the model, in order to cause the viewer to accurately
      * reflect the model. This method only affects the viewer, not the model.
      * </p>
@@ -142,13 +142,13 @@ public abstract class AbstractListViewer<E,I> extends StructuredViewer<E,I> {
             insertItem(labelProvider, element, ix);
         }
     }
-    
+
     private void insertItem(ILabelProvider<E> labelProvider, E element, int index) {
         listAdd(getLabelProviderText(labelProvider, element), index);
 		listMap.add(index, element);
 		mapElement(element, getControl()); // must map it, since findItem only looks in map, if enabled
     }
-    
+
     /**
 	 * Inserts the given element into this list viewer at the given position.
 	 * If this viewer has a sorter, the position is ignored and the element is
@@ -158,7 +158,7 @@ public abstract class AbstractListViewer<E,I> extends StructuredViewer<E,I> {
 	 * been added to the model, in order to cause the viewer to accurately
 	 * reflect the model. This method only affects the viewer, not the model.
 	 * </p>
-	 * 
+	 *
 	 * @param element
 	 *            the element
 	 * @param position
@@ -171,11 +171,11 @@ public abstract class AbstractListViewer<E,I> extends StructuredViewer<E,I> {
     		add(element);
     		return;
     	}
-    	
+
     	insertItem((ILabelProvider<E>) getLabelProvider(), element, position);
     }
-    
-    
+
+
     /**
      * Return the text for the element from the labelProvider.
      * If it is null then return the empty String.
@@ -183,10 +183,10 @@ public abstract class AbstractListViewer<E,I> extends StructuredViewer<E,I> {
      * @param element
      * @return String. Return the emptyString if the labelProvider
      * returns null for the text.
-     * 
+     *
      * @since 3.1
      */
-    private String getLabelProviderText(ILabelProvider<E> labelProvider, E element){
+    private String getLabelProviderText(ILabelProvider<E> labelProvider, Object element){
     	String text = labelProvider.getText(element);
         if(text == null) {
 			return "";//$NON-NLS-1$
@@ -199,7 +199,7 @@ public abstract class AbstractListViewer<E,I> extends StructuredViewer<E,I> {
      * If this viewer does not have a sorter, the element is added at the end;
      * otherwise the element is inserted at the appropriate position.
      * <p>
-     * This method should be called (by the content provider) when a single element 
+     * This method should be called (by the content provider) when a single element
      * has been added to the model, in order to cause the viewer to accurately
      * reflect the model. This method only affects the viewer, not the model.
      * Note that there is another method for efficiently processing the simultaneous
@@ -262,7 +262,7 @@ public abstract class AbstractListViewer<E,I> extends StructuredViewer<E,I> {
      * @return the element at the given index, or <code>null</code> if the
      *   index is out of range
      */
-    public E getElementAt(int index) {
+    public Object getElementAt(int index) {
         if (index >= 0 && index < listMap.size()) {
 			return listMap.get(index);
 		}
@@ -283,11 +283,11 @@ public abstract class AbstractListViewer<E,I> extends StructuredViewer<E,I> {
      * Method declared on StructuredViewer.
      */
     @Override
-	protected List<E> getSelectionFromWidget() {
+	protected List<Object> getSelectionFromWidget() {
         int[] ixs = listGetSelectionIndices();
-        ArrayList<E> list = new ArrayList<E>(ixs.length);
+        ArrayList<Object> list = new ArrayList<Object>(ixs.length);
         for (int i = 0; i < ixs.length; i++) {
-            E e = getElementAt(ixs[i]);
+            Object e = getElementAt(ixs[i]);
             if (e != null) {
 				list.add(e);
 			}
@@ -337,13 +337,13 @@ public abstract class AbstractListViewer<E,I> extends StructuredViewer<E,I> {
     @Override
 	protected void inputChanged(I input, I oldInput) {
         listMap.clear();
-        E[] children = getSortedChildren(getRoot());
+        Object[] children = getSortedChildren(getRoot());
         int size = children.length;
 
         listRemoveAll();
         String[] labels = new String[size];
         for (int i = 0; i < size; i++) {
-            E el = children[i];
+            Object el = children[i];
             labels[i] = getLabelProviderText((ILabelProvider<E>) getLabelProvider(),el);
             listMap.add(el);
             mapElement(el, getControl()); // must map it, since findItem only looks in map, if enabled
@@ -363,35 +363,35 @@ public abstract class AbstractListViewer<E,I> extends StructuredViewer<E,I> {
 				listMap.clear();
 			}
             unmapAllElements();
-            List<E> selection = getSelectionFromWidget();
-            
+            List<Object> selection = getSelectionFromWidget();
+
             int topIndex = -1;
             if (selection == null || selection.isEmpty()) {
             	topIndex = listGetTopIndex();
             }
-            
-            E[] children = null;
+
+            Object[] children = null;
             list.setRedraw(false);
             try {
 				listRemoveAll();
-	            
+
 	            children = getSortedChildren(getRoot());
 				String[] items = new String[children.length];
-				
+
 				ILabelProvider<E> labelProvider = (ILabelProvider<E>) getLabelProvider();
-				
+
 				for (int i = 0; i < items.length; i++) {
-	                E el = children[i];
+	                Object el = children[i];
 	                items[i] = getLabelProviderText(labelProvider, el);
 	                listMap.add(el);
 	                mapElement(el, list); // must map it, since findItem only looks in map, if enabled
 	            }
-				
+
 				listSetItems(items);
             } finally {
             	list.setRedraw(true);
             }
-            
+
             if (topIndex == -1) {
             	setSelectionToWidget(selection, false);
             } else {
@@ -404,7 +404,7 @@ public abstract class AbstractListViewer<E,I> extends StructuredViewer<E,I> {
             doUpdateItem(list, singleElement, true);
         }
     }
-    
+
     /**
      * Returns the index of the item currently at the top of the viewable area.
      * <p>
@@ -427,7 +427,7 @@ public abstract class AbstractListViewer<E,I> extends StructuredViewer<E,I> {
      */
     protected void listSetTopIndex(int index) {
     }
-    
+
     /**
      * Removes the given elements from this list viewer.
      *
@@ -453,7 +453,7 @@ public abstract class AbstractListViewer<E,I> extends StructuredViewer<E,I> {
      * Removes the given elements from this list viewer.
      * The selection is updated if required.
      * <p>
-     * This method should be called (by the content provider) when elements 
+     * This method should be called (by the content provider) when elements
      * have been removed from the model, in order to cause the viewer to accurately
      * reflect the model. This method only affects the viewer, not the model.
      * </p>
@@ -476,7 +476,7 @@ public abstract class AbstractListViewer<E,I> extends StructuredViewer<E,I> {
      * Removes the given element from this list viewer.
      * The selection is updated if necessary.
      * <p>
-     * This method should be called (by the content provider) when a single element 
+     * This method should be called (by the content provider) when a single element
      * has been removed from the model, in order to cause the viewer to accurately
      * reflect the model. This method only affects the viewer, not the model.
      * Note that there is another method for efficiently processing the simultaneous
@@ -495,7 +495,7 @@ public abstract class AbstractListViewer<E,I> extends StructuredViewer<E,I> {
 	 * The list viewer implementation of this <code>Viewer</code> framework
 	 * method ensures that the given label provider is an instance of
 	 * <code>ILabelProvider</code>.
-	 * 
+	 *
 	 * <b>The optional interfaces {@link IColorProvider} and
 	 * {@link IFontProvider} have no effect for this type of viewer</b>
 	 */
@@ -509,7 +509,7 @@ public abstract class AbstractListViewer<E,I> extends StructuredViewer<E,I> {
      * Method declared on StructuredViewer.
      */
     @Override
-	protected void setSelectionToWidget(List<E> in, boolean reveal) {
+	protected void setSelectionToWidget(List<Object> in, boolean reveal) {
         if (in == null || in.size() == 0) { // clear selection
             listDeselectAll();
         } else {
@@ -517,7 +517,7 @@ public abstract class AbstractListViewer<E,I> extends StructuredViewer<E,I> {
             int[] ixs = new int[n];
             int count = 0;
             for (int i = 0; i < n; ++i) {
-                E el = in.get(i);
+                Object el = in.get(i);
                 int ix = getElementIndex(el);
                 if (ix >= 0) {
 					ixs[count++] = ix;
@@ -536,11 +536,11 @@ public abstract class AbstractListViewer<E,I> extends StructuredViewer<E,I> {
     /**
      * Returns the index of the given element in listMap, or -1 if the element cannot be found.
      * As of 3.3, uses the element comparer if available.
-     * 
+     *
      * @param element
      * @return the index
      */
-    int getElementIndex(E element) {
+    int getElementIndex(Object element) {
 		IElementComparer comparer = getComparer();
 		if (comparer == null) {
 			return listMap.indexOf(element);
@@ -556,7 +556,7 @@ public abstract class AbstractListViewer<E,I> extends StructuredViewer<E,I> {
     /**
 	 * @param element
 	 * @return true if listMap contains the given element
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	private boolean listMapContains(E element) {

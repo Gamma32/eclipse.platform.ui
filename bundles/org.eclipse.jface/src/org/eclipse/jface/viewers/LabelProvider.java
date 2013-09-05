@@ -52,7 +52,7 @@ public class LabelProvider<E> extends BaseLabelProvider<E> implements ILabelProv
 	 * <code>ILabelProvider</code> method returns the element's
 	 * <code>toString</code> string. Subclasses may override.
 	 */
-	public String getText(E element) {
+	public String getText(Object element) {
 		return element == null ? "" : element.toString();//$NON-NLS-1$
 	}
 }

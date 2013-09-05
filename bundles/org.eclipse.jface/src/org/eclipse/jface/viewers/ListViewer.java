@@ -34,7 +34,7 @@ import org.eclipse.swt.widgets.Control;
  * </p>
  * @param <E> Type of an element of the model
  * @param <I> Type of the input
- * 
+ *
  * @see TableViewer
  * @noextend This class is not intended to be subclassed by clients.
  */
@@ -48,7 +48,7 @@ public class ListViewer<E,I> extends AbstractListViewer<E,I> {
     /**
      * Creates a list viewer on a newly-created list control under the given parent.
      * The list control is created using the SWT style bits <code>MULTI, H_SCROLL, V_SCROLL,</code> and <code>BORDER</code>.
-     * The viewer has no input, no content provider, a default label provider, 
+     * The viewer has no input, no content provider, a default label provider,
      * no sorter, and no filters.
      *
      * @param parent the parent control
@@ -60,7 +60,7 @@ public class ListViewer<E,I> extends AbstractListViewer<E,I> {
     /**
      * Creates a list viewer on a newly-created list control under the given parent.
      * The list control is created using the given SWT style bits.
-     * The viewer has no input, no content provider, a default label provider, 
+     * The viewer has no input, no content provider, a default label provider,
      * no sorter, and no filters.
      *
      * @param parent the parent control
@@ -72,7 +72,7 @@ public class ListViewer<E,I> extends AbstractListViewer<E,I> {
 
     /**
      * Creates a list viewer on the given list control.
-     * The viewer has no input, no content provider, a default label provider, 
+     * The viewer has no input, no content provider, a default label provider,
      * no sorter, and no filters.
      *
      * @param list the list control
@@ -207,7 +207,7 @@ public class ListViewer<E,I> extends AbstractListViewer<E,I> {
 	protected void listShowSelection() {
         list.showSelection();
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.viewers.AbstractListViewer#listGetTopIndex()
      */
@@ -215,7 +215,7 @@ public class ListViewer<E,I> extends AbstractListViewer<E,I> {
 	protected int listGetTopIndex() {
     	return list.getTopIndex();
     }
-    
+
     /*
      * (non-Javadoc)
      * @see org.eclipse.jface.viewers.AbstractListViewer#listSetTopIndex(int)
@@ -229,7 +229,7 @@ public class ListViewer<E,I> extends AbstractListViewer<E,I> {
 	 * @see org.eclipse.jface.viewers.AbstractListViewer#setSelectionToWidget(java.util.List, boolean)
 	 */
 	@Override
-	protected void setSelectionToWidget(List<E> in, boolean reveal) {
+	protected void setSelectionToWidget(List<Object> in, boolean reveal) {
 		if( reveal ) {
 			super.setSelectionToWidget(in, reveal);
 		} else {
@@ -240,7 +240,7 @@ public class ListViewer<E,I> extends AbstractListViewer<E,I> {
 	            int[] ixs = new int[n];
 	            int count = 0;
 	            for (int i = 0; i < n; ++i) {
-	                E el = in.get(i);
+	                Object el = in.get(i);
 	                int ix = getElementIndex(el);
 	                if (ix >= 0) {
 						ixs[count++] = ix;
@@ -254,6 +254,6 @@ public class ListViewer<E,I> extends AbstractListViewer<E,I> {
 	        }
 		}
 	}
-    
-    
+
+
 }

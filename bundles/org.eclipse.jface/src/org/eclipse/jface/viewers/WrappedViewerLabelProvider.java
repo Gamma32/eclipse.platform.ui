@@ -123,7 +123,7 @@ class WrappedViewerLabelProvider<E,I> extends ColumnLabelProvider<E,I> {
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
 	 */
 	@Override
-	public String getText(E element) {
+	public String getText(Object element) {
 		return getLabelProvider().getText(element);
 	}
 
