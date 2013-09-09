@@ -78,7 +78,7 @@ public abstract class StructuredViewer<E,I> extends ContentViewer<E,I> implement
 	/**
 	 * This viewer's comparator used for sorting. <code>null</code> means there is no comparator.
 	 */
-	private ViewerComparator sorter;
+	private ViewerComparator<E,I> sorter;
 
 	/**
 	 * This viewer's filters (element type: <code>ViewerFilter</code>).
@@ -1117,7 +1117,7 @@ public abstract class StructuredViewer<E,I> extends ContentViewer<E,I> implement
      *
 	 * @since 3.2
 	 */
-	public ViewerComparator getComparator(){
+	public ViewerComparator<E,I> getComparator(){
 		return sorter;
 	}
 	
@@ -1371,14 +1371,14 @@ public abstract class StructuredViewer<E,I> extends ContentViewer<E,I> implement
 	 * @return <code>true</code> if refiltering is required, and
 	 *         <code>false</code> otherwise
 	 */
-	protected boolean needsRefilter(Object element, String property) {
+	protected boolean needsRefilter(E element, String property) {
 		if (sorter != null && sorter.isSorterProperty(element, property)) {
 			return true;
 		}
 
 		if (filters != null) {
 			for (int i = 0, n = filters.size(); i < n; ++i) {
-				ViewerFilter filter = filters.get(i);
+				ViewerFilter<E,I> filter = filters.get(i);
 				if (filter.isFilterProperty(element, property)) {
 					return true;
 				}
@@ -1827,7 +1827,7 @@ public abstract class StructuredViewer<E,I> extends ContentViewer<E,I> implement
      *
      * @since 3.2
 	 */
-	public void setComparator(ViewerComparator comparator){
+	public void setComparator(ViewerComparator<E,I> comparator){
 		if (this.sorter != comparator){
 			this.sorter = comparator;
 			refresh();
