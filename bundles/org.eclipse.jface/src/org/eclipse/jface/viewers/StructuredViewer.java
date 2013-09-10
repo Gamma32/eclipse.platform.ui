@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Tom Schindl - bug 151205
  *     Hendrik Still <hendrik.still@gammas.de> - bug 412273
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 402439
  *******************************************************************************/
 package org.eclipse.jface.viewers;
 
@@ -1066,9 +1067,31 @@ public abstract class StructuredViewer<E,I> extends ContentViewer<E,I> implement
 	 * <code>getSelectionFromWidget(List)</code> instead.
 	 * <p>
 	 * @return ISelection
+	 * 
+	 * @deprecated  use <code>getStructuredSelection</code> instead.
 	 */
+	
 	@Override
 	public ISelection getSelection() {
+		Control control = getControl();
+		if (control == null || control.isDisposed()) {
+			return StructuredSelection.EMPTY;
+		}
+		List<E> list = getSelectionFromWidget();
+		return new StructuredSelection(list, comparer);
+	}
+	
+	/**
+	 * The <code>StructuredViewer</code> implementation of this method returns
+	 * the result as an <code>IStructuredSelection</code>.
+	 * <p>
+	 * Subclasses do not typically override this method, but implement
+	 * <code>getSelectionFromWidget(List)</code> instead.
+	 * <p>
+	 * @return IStructuredSelection
+	 * @since 3.10
+	 */
+	public IStructuredSelection getStructuredSelection() {
 		Control control = getControl();
 		if (control == null || control.isDisposed()) {
 			return StructuredSelection.EMPTY;
