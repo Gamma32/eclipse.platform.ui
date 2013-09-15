@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eclipse.jface.viewers;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.jface.resource.JFaceResources;
 
 /**
  * A concrete implementation of the <code>IStructuredSelection</code> interface,
@@ -23,14 +23,15 @@ import org.eclipse.core.runtime.Assert;
  * <p>
  * This class is not intended to be subclassed.
  * </p>
+ * @param <E> 
  * @noextend This class is not intended to be subclassed by clients.
  */
-public class StructuredSelection implements IStructuredSelection {
+public class StructuredSelection<E> implements IStructuredSelection<E> {
 
     /**
      * The element that make up this structured selection.
      */
-    private Object[] elements;
+    private List<E> elements;
 
     /**
      * The element comparer, or <code>null</code>
@@ -60,7 +61,9 @@ public class StructuredSelection implements IStructuredSelection {
      */
     public StructuredSelection(Object[] elements) {
     	Assert.isNotNull(elements);
-        this.elements = new Object[elements.length];
+//        this.elements = new Object[elements.length];
+        this.elements = new ArrayList<E>();
+        
         System.arraycopy(elements, 0, this.elements, 0, elements.length);
     }
 
@@ -70,16 +73,17 @@ public class StructuredSelection implements IStructuredSelection {
      *
      * @param element the element
      */
-    public StructuredSelection(Object element) {
+    public StructuredSelection(E element) {
         Assert.isNotNull(element);
-        elements = new Object[] { element };
+        elements = new ArrayList<E>();
+        elements.add(element);
     }
 
     /**
      * Creates a structured selection from the given <code>List</code>. 
      * @param elements list of selected elements
      */
-    public StructuredSelection(List elements) {
+    public StructuredSelection(List<E> elements) {
     	this(elements, null);
     }
 
@@ -95,9 +99,10 @@ public class StructuredSelection implements IStructuredSelection {
 	 *            the comparer, or null
 	 * @since 3.4
 	 */
-	public StructuredSelection(List elements, IElementComparer comparer) {
+	public StructuredSelection(List<E> elements, IElementComparer comparer) {
         Assert.isNotNull(elements);
-        this.elements = elements.toArray();
+//        this.elements = elements.toArray();
+        this.elements = elements;
         this.comparer = comparer;
 	}
 
@@ -131,18 +136,18 @@ public class StructuredSelection implements IStructuredSelection {
         boolean useComparer = comparer != null && comparer == s2.comparer;
         
         //size
-        int myLen = elements.length;
-        if (myLen != s2.elements.length) {
+        int myLen = elements.size();
+        if (myLen != s2.elements.size()) {
             return false;
         }
         //element comparison
         for (int i = 0; i < myLen; i++) {
         	if (useComparer) {
-                if (!comparer.equals(elements[i], s2.elements[i])) {
+                if (!comparer.equals(elements.get(i), s2.elements.get(i))) {
                     return false;
                 }
         	} else {
-	            if (!elements[i].equals(s2.elements[i])) {
+	            if (!elements.get(i).equals(s2.elements.get(i))) {
 	                return false;
 	            }
         	}
@@ -153,44 +158,43 @@ public class StructuredSelection implements IStructuredSelection {
     /* (non-Javadoc)
      * Method declared in IStructuredSelection.
      */
-    public Object getFirstElement() {
-        return isEmpty() ? null : elements[0];
+    public E getFirstElement() {
+        return isEmpty() ? null : elements.get(0);
     }
 
     /* (non-Javadoc)
      * Method declared in ISelection.
      */
     public boolean isEmpty() {
-        return elements == null || elements.length == 0;
+        return elements == null || elements.size() == 0;
     }
 
     /* (non-Javadoc)
      * Method declared in IStructuredSelection.
      */
-    public Iterator iterator() {
-        return Arrays.asList(elements == null ? new Object[0] : elements)
-                .iterator();
+    public Iterator<E> iterator() {
+        return this.elements.iterator();
     }
 
     /* (non-Javadoc)
      * Method declared in IStructuredSelection.
      */
     public int size() {
-        return elements == null ? 0 : elements.length;
+        return elements == null ? 0 : elements.size();
     }
 
     /* (non-Javadoc)
      * Method declared in IStructuredSelection.
      */
     public Object[] toArray() {
-        return elements == null ? new Object[0] : (Object[]) elements.clone();
+    	return elements == null ? new Object[0] : elements.toArray().clone();
     }
 
     /* (non-Javadoc)
      * Method declared in IStructuredSelection.
      */
-    public List toList() {
-        return Arrays.asList(elements == null ? new Object[0] : elements);
+    public List<E> toList() {
+    	return (elements == null ? new ArrayList<E>() : elements);
     }
 
     /**

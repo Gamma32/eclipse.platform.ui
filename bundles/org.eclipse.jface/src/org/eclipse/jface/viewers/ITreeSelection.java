@@ -31,11 +31,12 @@ package org.eclipse.jface.viewers;
  * </pre>
  * See bugs 135818 and 133375 for details.
  * </p>
+ * @param <E> 
  * 
  * @since 3.2
  *
  */
-public interface ITreeSelection extends IStructuredSelection {
+public interface ITreeSelection<E> extends IStructuredSelection<E> {
 
 	/**
 	 * Returns the paths in this selection
@@ -52,6 +53,6 @@ public interface ITreeSelection extends IStructuredSelection {
 	 * 
 	 * @return the array of tree paths
 	 */
-	public TreePath[] getPathsFor(Object element);
+	public TreePath[] getPathsFor(E element);
 
 }

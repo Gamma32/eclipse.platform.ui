@@ -15,22 +15,23 @@ import java.util.List;
 
 /**
  * A selection containing elements.
+ * @param <E> 
  */
-public interface IStructuredSelection extends ISelection {
+public interface IStructuredSelection<E> extends ISelection {
     /**
      * Returns the first element in this selection, or <code>null</code>
      * if the selection is empty.
      *
      * @return an element, or <code>null</code> if none
      */
-    public Object getFirstElement();
+    public E getFirstElement();
 
     /**
      * Returns an iterator over the elements of this selection.
      *
      * @return an iterator over the selected elements
      */
-    public Iterator iterator();
+    public Iterator<E> iterator();
 
     /**
      * Returns the number of elements selected in this selection.
@@ -54,5 +55,5 @@ public interface IStructuredSelection extends ISelection {
      *
      * @return the selected elements as a list
      */
-    public List toList();
+    public List<E> toList();
 }

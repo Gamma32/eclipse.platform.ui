@@ -21,10 +21,11 @@ import org.eclipse.core.runtime.Assert;
  * <p>
  * This class is not intended to be subclassed.
  * </p>
+ * @param <E> 
  * 
  * @since 3.2
  */
-public class TreeSelection extends StructuredSelection implements ITreeSelection {
+public class TreeSelection<E> extends StructuredSelection<E> implements ITreeSelection<E>{
 
 	/* Implementation note.  This class extends StructuredSelection because many pre-existing
 	 * JFace viewer clients assumed that the only implementation of IStructuredSelection 
